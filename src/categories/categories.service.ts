@@ -14,6 +14,10 @@ export class CategoriesService {
     return this.repository.findByNameInsensitive(name.trim());
   }
 
+  findById(id: string): Promise<Category | null> {
+    return this.repository.findById(id);
+  }
+
   async listNames(): Promise<string[]> {
     const categories = await this.repository.listActive();
     return categories.map((c) => c.name);

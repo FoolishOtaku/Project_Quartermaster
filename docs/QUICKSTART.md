@@ -1,4 +1,4 @@
-# Project Quartermaster — Quickstart (v0.2.0)
+# Project Quartermaster — Quickstart (v0.2.1)
 
 This guide takes you from a clean checkout to a running Telegram bot with
 working general commands (`/start`, `/help`, `/me`), a seeded admin account,
@@ -11,7 +11,7 @@ Estimated time: **15–25 minutes.**
 
 ## 1. What you will build
 
-Version 0.2.0 is the **Inventory MVP**. By the end of this guide:
+Version 0.2.1 is the **Inventory MVP with button-driven flows**. By the end of this guide:
 
 - The bot runs locally and connects to Telegram.
 - A PostgreSQL database exists with `users`, `categories`, `locations`, and `items` tables.
@@ -173,7 +173,7 @@ You should see:
 
 ```txt
 [Nest] LOG [PrismaService] Connected to the database
-[Nest] LOG [Bootstrap] Project Quartermaster bot is running (v0.2.0)
+[Nest] LOG [Bootstrap] Project Quartermaster bot is running (v0.2.1)
 ```
 
 The process stays running and listens to Telegram via long polling. Leave it
@@ -248,9 +248,10 @@ pm2 save
 
 ## 15. What's next
 
-See the roadmap in `Design.md` (Section 29). This release delivered **v0.2.0 —
-Inventory MVP**. The next milestone is **v0.3.0 — Individual-Asset Inventory**
-(`ItemUnit`, per-unit codes, unit condition/location/availability), enabling
-individual tracking of monitors, PCs, and other unique assets.
+See the roadmap in `Design.md` (Section 29). This release delivered **v0.2.1 —
+Inventory MVP with button-driven flows**. The next milestone is **v0.3.0 —
+Individual-Asset Inventory** (`ItemUnit`, per-unit codes, unit
+condition/location/availability), enabling individual tracking of monitors,
+PCs, and other unique assets.
 
 For the full command reference, see [BOT_COMMANDS.md](BOT_COMMANDS.md).

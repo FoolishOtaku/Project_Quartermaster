@@ -91,7 +91,20 @@ export class InventoryUpdate {
     if (!userId || !this.conversations.isActive(userId)) {
       return;
     }
-    await this.flows.route(ctx, userId, text);
+    await this.flows.handleText(ctx, userId, text);
+  }
+
+  /** Routes inline-keyboard button presses into the active flow. */
+  @On('callback_query')
+  async onCallback(@Ctx() ctx: BotContext): Promise<void> {
+    const cb = ctx.callbackQuery;
+    const data = cb && 'data' in cb ? cb.data : '';
+    const userId = this.userId(ctx);
+    if (!userId) {
+      await ctx.answerCbQuery();
+      return;
+    }
+    await this.flows.handleCallback(ctx, userId, data ?? '');
   }
 
   // ---- helpers -------------------------------------------------------------

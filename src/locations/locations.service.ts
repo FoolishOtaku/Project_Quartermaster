@@ -14,6 +14,10 @@ export class LocationsService {
     return this.repository.findByNameInsensitive(name.trim());
   }
 
+  findById(id: string): Promise<Location | null> {
+    return this.repository.findById(id);
+  }
+
   async listNames(): Promise<string[]> {
     const locations = await this.repository.listActive();
     return locations.map((l) => l.name);

@@ -1,7 +1,9 @@
-# Bot Commands (v0.2.0)
+# Bot Commands (v0.2.1)
 
 All commands require you to be a **registered, active** user. Write actions are
-role-gated. Send `/cancel` at any time to stop a multi-step flow.
+role-gated. Most choices are made by **tapping inline buttons**; you can also
+type the value as a fallback. Tap **❌ Cancel** (or send `/cancel`) to stop a
+multi-step flow, and **⏭ Skip** to leave an optional field blank.
 
 ## General
 
@@ -57,64 +59,71 @@ Bot:  Item Detail
       Owner / Source: Lab Purchase
 ```
 
-### Add (guided)
+### Add (button-driven)
 
 ```txt
 You:  /add_item
-Bot:  Add a new item.
-
-      Step 1 — Item name?
+Bot:  🆕 New item — Step 1 of 11
+      What is the item name?
+      [ ❌ Cancel ]
 You:  HDMI Cable
-Bot:  Step 2 — Category? Type the name.
-      Categories: AIO Computer, Cable, ...
-You:  Cable
-Bot:  Step 3 — Tracking type? (Bulk Stock / Consumable)
-You:  Bulk Stock
-Bot:  Step 4 — Quantity? (whole number)
+Bot:  Step 2 of 11 — Choose a category:
+      [ AIO Computer ] [ Cable ]
+      [ Monitor ]      [ Network ]   ...
+      [ ❌ Cancel ]
+You:  (tap) Cable
+Bot:  Step 3 of 11 — Choose a tracking type:
+      [ 📦 Bulk Stock ] [ 🧴 Consumable ]
+You:  (tap) Bulk Stock
+Bot:  Step 4 of 11 — How many? Enter a whole number.
 You:  8
-Bot:  Step 5 — Unit? (e.g. pcs, set, box) or "-" to skip
+Bot:  Step 5 of 11 — Unit? Type it, or tap Skip.
+      [ ⏭ Skip ] [ ❌ Cancel ]
 You:  pcs
-Bot:  Step 6 — Minimum stock? (whole number) or "-" to skip
+Bot:  Step 6 of 11 — Minimum stock? ...        [ ⏭ Skip ] [ ❌ Cancel ]
 You:  3
-Bot:  Step 7 — Location? Type the name or "-" to skip.
-      Locations: ASE Lab Room, Cable Box, ...
-You:  Cable Box
-Bot:  Step 8 — Storage detail? ... or "-" to skip
+Bot:  Step 7 of 11 — Where is it stored?
+      [ ASE Lab Room ] [ Cable Box ] ...
+      [ ⏭ Skip (Unknown) ] [ ❌ Cancel ]
+You:  (tap) Cable Box
+Bot:  Step 8 of 11 — Storage detail? ...        [ ⏭ Skip ] [ ❌ Cancel ]
 You:  HDMI section
-Bot:  Step 9 — Condition? (New / Good / Fair / Needs Repair / Broken) or "-" for Good
-You:  Good
-Bot:  Step 10 — Owner / source? (Lab Purchase / ...) or "-" for Unknown
-You:  Lab Purchase
-Bot:  Step 11 — Notes? or "-" to skip
+Bot:  Step 9 of 11 — What condition is it in?
+      [ New ] [ Good ] [ Fair ] [ Needs Repair ] [ Broken ]
+You:  (tap) Good
+Bot:  Step 10 of 11 — Owner / source?
+      [ Lab Purchase ] [ University Asset ] ...
+You:  (tap) Lab Purchase
+Bot:  Step 11 of 11 — Any notes? Type them, or tap Skip.
 You:  Bought for ASE event
-Bot:  Please confirm the new item:
+Bot:  Please review the new item:
       ...
-      Confirm? (yes / no)
-You:  yes
+      [ ✅ Confirm ] [ ❌ Cancel ]
+You:  (tap) ✅ Confirm
 Bot:  ✅ Item created successfully.
       Item Detail
       Code: ASE-CABL-001
       ...
 ```
 
-### Update (guided)
+Every selection step accepts a typed answer too (e.g. typing `Cable` instead of
+tapping it), so the flow keeps working even if buttons are unavailable.
+
+### Update (button field picker)
 
 ```txt
 You:  /update_item ASE-CABL-001
 Bot:  Item Detail ...
       Which field do you want to update?
-      1. Name
-      2. Quantity
-      3. Minimum Stock
-      4. Unit
-      5. Location
-      6. Storage Detail
-      7. Condition
-      8. Availability
-      9. Owner / Source
-      10. Notes
-You:  2
-Bot:  Enter the new value for Quantity:
+      [ Name ]       [ Quantity ]
+      [ Minimum Stock ] [ Unit ]
+      [ Location ]   [ Storage Detail ]
+      [ Condition ]  [ Availability ]
+      [ Owner / Source ] [ Notes ]
+      [ ❌ Cancel ]
+You:  (tap) Quantity
+Bot:  Enter the new value for Quantity (whole number):
+      [ ❌ Cancel ]
 You:  10
 Bot:  ✅ Item updated.
       ...
@@ -125,8 +134,8 @@ Bot:  ✅ Item updated.
 ```txt
 You:  /archive_item ASE-CABL-001
 Bot:  Archive "HDMI Cable" (ASE-CABL-001)?
-      Type YES to confirm, or anything else to cancel.
-You:  YES
+      [ ✅ Yes, archive ] [ ❌ Cancel ]
+You:  (tap) ✅ Yes, archive
 Bot:  ✅ Archived "HDMI Cable" (ASE-CABL-001).
 ```
 

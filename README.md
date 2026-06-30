@@ -5,16 +5,19 @@ Laboratory** at Telkom University. It lets authorized members record, search,
 borrow, return, and report lab inventory through a Telegram bot, with an
 optional AI assistant added in later versions.
 
-> **Current release: v0.2.0 — Inventory MVP.**
+> **Current release: v0.2.1 — Inventory MVP (button-driven flows).**
 > Quantity-based inventory with categories and locations: `/add_item`,
-> `/search_item`, `/view_item`, `/update_item`, `/archive_item`, on top of the
+> `/search_item`, `/view_item`, `/update_item`, `/archive_item`. Choices are
+> made with tappable inline keyboards (with typing as a fallback), on top of the
 > v0.1.0 foundation (`/start`, `/help`, `/me`, admin seed, role guards).
 
-## Features in v0.2.0
+## Features in v0.2.1
 
+- Inline-keyboard (button) driven `/add_item`, `/update_item`, and `/archive_item` —
+  tap to choose category, tracking type, location, condition, owner/source, and
+  to confirm; Skip/Cancel buttons for optional steps. Typing still works as a fallback.
 - Category and Location models, seeded from the spreadsheet Lookup Lists.
 - Quantity-based items (Bulk Stock / Consumable) with auto-generated codes.
-- Inventory commands with guided multi-step flows and role-gated writes.
 - Search and view for any registered user; add/update for admin/assistant; archive for admin.
 - Low-stock indicator in search and detail output.
 
