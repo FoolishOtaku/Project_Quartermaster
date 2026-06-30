@@ -8,6 +8,8 @@ import { InventoryFlowService } from './flows/inventory-flow.service';
 import { UnitFlowService, UNIT_FLOWS } from './flows/unit-flow.service';
 import { BorrowingFlowService, BORROW_FLOWS } from './flows/borrowing-flow.service';
 import { MenuService, MENU_CAPTURE_FLOWS } from './flows/menu.service';
+import { RegistrationFlowService } from './flows/registration-flow.service';
+import { RegistrationAdminService } from './registration/registration-admin.service';
 import { InventoryService } from '../inventory/inventory.service';
 import {
   formatItemDetail,
@@ -28,6 +30,8 @@ export class InventoryUpdate {
     private readonly unitFlows: UnitFlowService,
     private readonly borrowingFlows: BorrowingFlowService,
     private readonly menu: MenuService,
+    private readonly registration: RegistrationFlowService,
+    private readonly registrationAdmin: RegistrationAdminService,
     private readonly conversations: ConversationService,
   ) {}
 
@@ -165,6 +169,8 @@ export class InventoryUpdate {
       await this.borrowingFlows.handleText(ctx, userId, text);
     } else if (MENU_CAPTURE_FLOWS.includes(state.flow)) {
       await this.menu.handleText(ctx, userId, text);
+    } else if (state.flow === 'REGISTER') {
+      await this.registration.handleText(ctx, userId, text);
     } else {
       await this.flows.handleText(ctx, userId, text);
     }
@@ -182,6 +188,16 @@ export class InventoryUpdate {
     // Menu navigation/actions are handled first, regardless of any active flow.
     if (data.startsWith('qm|menu')) {
       await this.menu.handleCallback(ctx, userId, data);
+      return;
+    }
+    // Main-admin registration/user-management panel.
+    if (data.startsWith('qm|adm')) {
+      await this.registrationAdmin.handleCallback(ctx, userId, data);
+      return;
+    }
+    // Self-service registration (works for unregistered users).
+    if (data.startsWith('qm|reg')) {
+      await this.registration.handleCallback(ctx, userId, data);
       return;
     }
     const state = this.conversations.get(userId);

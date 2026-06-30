@@ -5,13 +5,25 @@ Laboratory** at Telkom University. It lets authorized members record, search,
 borrow, return, and report lab inventory through a Telegram bot, with an
 optional AI assistant added in later versions.
 
-> **Current release: v0.5.0 — Reports & CSV Export.**
-> Generate inventory reports right in Telegram — summary, borrowed, damaged,
-> lost, unknown-location, ownership, low-stock, warranty, and maintenance-due —
-> and download any of them as CSV (`/report`, `/export_report`, plus a **📊
-> Reports** entry in the interactive menu). Built on top of the v0.4.1
-> interactive button UI, the v0.4.0 borrowing system, v0.3.0 individual-asset
-> inventory, and the v0.2.x Inventory MVP.
+> **Current release: v0.5.1 — Self-Service Registration & User Management.**
+> New users register themselves in Telegram (full name → NIM → confirm) into a
+> 2-minute pending request; the **main admin** (the creator) reviews requests in
+> a dedicated 🛡 Admin panel, approves them with a role, and can change or
+> deactivate any user's role — no more hand-editing the database. Built on top
+> of the v0.5.0 reports release, the v0.4.1 interactive button UI, and the
+> v0.4.0 borrowing system.
+
+## Features in v0.5.1
+
+- `/register` self-service flow for unregistered users (full name + NIM), with a
+  pending request that **expires after 2 minutes**.
+- 🛡 **Admin panel** (`/requests` + menu entry) for the **main admin only**
+  (the `ADMIN_TELEGRAM_ID` creator): review requests, approve with a role.
+- **👥 Manage users**: change an existing user's role or deactivate them.
+- Applicants are notified on approval / role change; the main admin is pinged on
+  new requests. The main-admin account is protected from changes.
+- No schema changes — pending requests are in-memory; approved users use the
+  existing `User` model.
 
 ## Features in v0.5.0
 
@@ -92,7 +104,7 @@ src/
   inventory/           # InventoryModule: items + units, code util, presenter, types
   borrowing/           # BorrowingModule: service, repository (transactions), presenter
   reports/             # ReportsModule: repository (aggregations), presenter (text + CSV), service
-  bot/                 # Bot updates, services, messages, conversation state + flows
+  bot/                 # Bot updates, services, messages, conversation state, flows, registration
   common/              # Guards, decorators, constants (role checking)
 docs/
   QUICKSTART.md        # Step-by-step setup and run guide
@@ -101,6 +113,7 @@ docs/
   REQUIREMENTS-0.3.0.md# Acceptance criteria for v0.3.0
   REQUIREMENTS-0.4.0.md# Acceptance criteria for v0.4.0
   REQUIREMENTS-0.5.0.md# Acceptance criteria for v0.5.0
+  REQUIREMENTS-0.5.1.md# Acceptance criteria for v0.5.1
   BOT_COMMANDS.md      # Command reference with example flows
 Design.md              # Full software design document and roadmap
 ```
@@ -171,6 +184,7 @@ npm run start:dev
 - [Requirements (v0.3.0)](docs/REQUIREMENTS-0.3.0.md)
 - [Requirements (v0.4.0)](docs/REQUIREMENTS-0.4.0.md)
 - [Requirements (v0.5.0)](docs/REQUIREMENTS-0.5.0.md)
+- [Requirements (v0.5.1)](docs/REQUIREMENTS-0.5.1.md)
 - [Design document & roadmap](Design.md)
 
 ## License

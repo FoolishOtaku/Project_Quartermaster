@@ -59,7 +59,7 @@ const cb = (label: string, data: string): Btn => Markup.button.callback(label, d
 
 export const MenuKeyboards = {
   /** Main menu — tailored to what this user's role is allowed to do. */
-  main: (role: UserRole) => {
+  main: (role: UserRole, opts: { isMainAdmin?: boolean } = {}) => {
     const rows: Btn[][] = [
       [cb('🔍 Search', MENU.SEARCH), cb('📄 View item', MENU.VIEW_ITEM)],
       [cb('🔧 View unit', MENU.VIEW_UNIT), cb('👥 Who has it', MENU.WHO_HAS)],
@@ -77,6 +77,10 @@ export const MenuKeyboards = {
 
     if (canManage(role)) {
       rows.push([cb('🛠 Manage inventory', MENU.MANAGE)]);
+    }
+
+    if (opts.isMainAdmin) {
+      rows.push([cb('🛡 Admin panel', 'qm|adm|home')]);
     }
 
     rows.push([cb('❓ Help', MENU.HELP)]);

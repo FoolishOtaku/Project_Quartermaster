@@ -14,7 +14,9 @@ export type ConversationFlow =
   | 'SEARCH'
   | 'VIEW_ITEM'
   | 'VIEW_UNIT'
-  | 'WHO_HAS';
+  | 'WHO_HAS'
+  // Self-service registration (name -> NIM -> confirm) for unregistered users.
+  | 'REGISTER';
 
 export interface ConversationState {
   flow: ConversationFlow;

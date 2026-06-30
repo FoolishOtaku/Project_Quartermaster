@@ -1,5 +1,5 @@
 <#
-  Project Quartermaster — one-command quickstart (v0.5.0)
+  Project Quartermaster — one-command quickstart (v0.5.1)
 
   Runs everything needed to get the bot running:
     1. Ensures a .env exists (creates it from .env.example on first run)

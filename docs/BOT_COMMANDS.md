@@ -1,9 +1,49 @@
-# Bot Commands (v0.4.1)
+# Bot Commands (v0.5.1)
 
-All commands require you to be a **registered, active** user. Write actions are
-role-gated. Most choices are made by **tapping inline buttons**; you can also
-type the value as a fallback. Tap **❌ Cancel** (or send `/cancel`) to stop a
-multi-step flow, and **⏭ Skip** to leave an optional field blank.
+All commands require you to be a **registered, active** user (except `/start`,
+`/help`, and `/register`). Write actions are role-gated. Most choices are made
+by **tapping inline buttons**; you can also type the value as a fallback. Tap
+**❌ Cancel** (or send `/cancel`) to stop a multi-step flow, and **⏭ Skip** to
+leave an optional field blank.
+
+## Getting access (v0.5.1)
+
+New users register themselves; the **main admin** (the creator account set as
+`ADMIN_TELEGRAM_ID`) approves them and assigns a role.
+
+| Command      | Access     | Description                                |
+| ------------ | ---------- | ------------------------------------------ |
+| `/register`  | Everyone   | Request access: full name → NIM → confirm. |
+| `/requests`  | Main admin | Review pending requests and assign roles.  |
+
+```txt
+You:   /start
+Bot:   👋 Welcome ... You are not registered yet.
+Bot:   📝 What is your full name?       [ ❌ Cancel ]
+You:   Budi Santoso
+Bot:   What is your NIM (student ID)?
+You:   1301213045
+Bot:   Please review your details:
+       Name: Budi Santoso
+       NIM: 1301213045
+       [ ✅ Submit request ] [ ❌ Cancel ]
+You:   (tap) ✅ Submit request
+Bot:   ✅ Request submitted! ... expires in 2 minutes.
+
+(main admin is pinged) 📨 New registration request: Budi Santoso (1301213045)
+Admin: (🛡 Admin panel → 📨 Registration requests → Budi)
+Bot:   Choose a role to approve this user:
+       [ Admin ] [ Coordinator ] [ Laboratory Assistant ]
+       [ Trusted Member ] [ Viewer ]
+Admin: (tap) Trusted Member
+Bot:   ✅ Approved Budi Santoso as Trusted Member.
+(Budi is notified) ✅ You're registered as Trusted Member! Send /menu to start.
+```
+
+Requests **expire 2 minutes** after submission; if one lapses, the user just
+sends `/register` again. The main admin can also open **👥 Manage users** from the
+Admin panel to change an existing user's role or deactivate them. The main-admin
+account itself cannot be changed or deactivated.
 
 ## Interactive menu (v0.4.1)
 

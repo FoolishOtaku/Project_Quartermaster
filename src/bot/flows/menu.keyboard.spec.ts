@@ -64,6 +64,13 @@ describe('MenuKeyboards (role-aware)', () => {
     }
   });
 
+  it('shows the Admin panel button only when isMainAdmin is set', () => {
+    expect(datas(MenuKeyboards.main(UserRole.ADMIN))).not.toContain('qm|adm|home');
+    expect(datas(MenuKeyboards.main(UserRole.ADMIN, { isMainAdmin: true }))).toContain('qm|adm|home');
+    // A non-admin role that is somehow the main admin still gets the panel button.
+    expect(datas(MenuKeyboards.main(UserRole.VIEWER, { isMainAdmin: true }))).toContain('qm|adm|home');
+  });
+
   it('exposes consistent role predicates', () => {
     expect(canBorrow(UserRole.VIEWER)).toBe(false);
     expect(canBorrow(UserRole.TRUSTED_MEMBER)).toBe(true);

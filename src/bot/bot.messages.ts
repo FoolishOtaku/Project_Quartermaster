@@ -59,8 +59,14 @@ export const BOT_MESSAGES = {
   UNIT_NOT_FOUND: 'I could not find that unit. Check the unit code and try again.',
 
   NOT_REGISTERED:
-    'You are not registered. Please contact the admin to get access.',
+    'You are not registered yet. Send /register to request access — the lab admin will review it and assign your role.',
   INACTIVE: 'Your account is inactive. Please contact the admin.',
   PERMISSION_DENIED: 'You do not have permission to perform this action.',
   GENERIC_ERROR: 'Something went wrong. Please try again later.',
+
+  WELCOME_UNREGISTERED: [
+    '👋 Welcome to *Project Quartermaster* — the ASE Laboratory inventory bot.',
+    '',
+    'You are not registered yet. Let\'s fix that — just answer a couple of quick questions below.',
+  ].join('\n'),
 } as const;

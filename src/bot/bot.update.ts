@@ -6,12 +6,15 @@ import { BotContext } from './bot.context';
 import { BotService } from './bot.service';
 import { BOT_MESSAGES } from './bot.messages';
 import { MenuKeyboards } from './flows/menu.keyboard';
+import { RegistrationFlowService } from './flows/registration-flow.service';
+import { UsersService } from '../users/users.service';
 import { RegisteredGuard } from '../common/guards/registered.guard';
 import { CtxUser } from '../common/decorators/ctx-user.decorator';
 
 /** Commands surfaced in Telegram's native "/" command menu. */
 const TELEGRAM_COMMANDS: { command: string; description: string }[] = [
   { command: 'menu', description: 'Open the interactive button menu' },
+  { command: 'register', description: 'Request access to the bot' },
   { command: 'help', description: 'Show the full command list' },
   { command: 'me', description: 'Show your account and role' },
   { command: 'search_item', description: 'Search inventory by keyword' },
@@ -29,12 +32,15 @@ const TELEGRAM_COMMANDS: { command: string; description: string }[] = [
   { command: 'my_borrowed', description: 'See what you currently have' },
   { command: 'report', description: 'Generate an inventory report' },
   { command: 'export_report', description: 'Export a report as CSV' },
+  { command: 'requests', description: 'Review registration requests (main admin)' },
 ];
 
 @Update()
 export class BotUpdate implements OnModuleInit {
   constructor(
     private readonly botService: BotService,
+    private readonly users: UsersService,
+    private readonly registration: RegistrationFlowService,
     @InjectBot() private readonly bot: Telegraf<BotContext>,
   ) {}
 
@@ -47,13 +53,28 @@ export class BotUpdate implements OnModuleInit {
     }
   }
 
-  /** /start — open to everyone. */
+  /**
+   * /start — open to everyone. Registered users get the menu; unregistered
+   * users are guided into the self-service registration flow.
+   */
   @Start()
   async onStart(@Ctx() ctx: BotContext): Promise<void> {
-    await ctx.reply(BOT_MESSAGES.START, {
-      parse_mode: 'Markdown',
-      ...MenuKeyboards.openButton(),
-    });
+    const telegramId = ctx.from?.id ? String(ctx.from.id) : '';
+    const user = telegramId ? await this.users.findByTelegramId(telegramId) : null;
+
+    if (user && user.isActive) {
+      await ctx.reply(BOT_MESSAGES.START, {
+        parse_mode: 'Markdown',
+        ...MenuKeyboards.openButton(),
+      });
+      return;
+    }
+
+    // Not registered (or inactive) — show the welcome and start registration.
+    await ctx.reply(BOT_MESSAGES.WELCOME_UNREGISTERED, { parse_mode: 'Markdown' });
+    if (telegramId) {
+      await this.registration.begin(ctx, telegramId);
+    }
   }
 
   /** /help — open to everyone. */

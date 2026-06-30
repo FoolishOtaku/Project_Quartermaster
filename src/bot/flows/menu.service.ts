@@ -10,6 +10,7 @@ import {
 import { InventoryService } from '../../inventory/inventory.service';
 import { BorrowingService } from '../../borrowing/borrowing.service';
 import { ReportsService } from '../../reports/reports.service';
+import { RegistrationAdminService } from '../registration/registration-admin.service';
 import { isReportKind } from '../../reports/reports.types';
 import { UsersService } from '../../users/users.service';
 import {
@@ -45,6 +46,7 @@ export class MenuService {
     private readonly inventory: InventoryService,
     private readonly borrowing: BorrowingService,
     private readonly reports: ReportsService,
+    private readonly admin: RegistrationAdminService,
     private readonly botService: BotService,
     private readonly inventoryFlows: InventoryFlowService,
     private readonly unitFlows: UnitFlowService,
@@ -56,7 +58,9 @@ export class MenuService {
   /** Show the main menu (used by /menu and /start's "Open menu" button). */
   async showMainMenu(ctx: BotContext, user: User, edit = false): Promise<void> {
     const text = `📋 *Quartermaster menu* — hi ${user.fullName}!\n\nTap an action below, or keep using slash commands.`;
-    const keyboard = MenuKeyboards.main(user.role);
+    const keyboard = MenuKeyboards.main(user.role, {
+      isMainAdmin: this.admin.isMainAdmin(user.telegramId),
+    });
     if (edit) {
       try {
         await ctx.editMessageText(text, { parse_mode: 'Markdown', ...keyboard });
