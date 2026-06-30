@@ -1,4 +1,4 @@
-# Project Quartermaster — Quickstart (v0.2.1)
+# Project Quartermaster — Quickstart (v0.2.2)
 
 This guide takes you from a clean checkout to a running Telegram bot with
 working general commands (`/start`, `/help`, `/me`), a seeded admin account,
@@ -11,7 +11,7 @@ Estimated time: **15–25 minutes.**
 
 ## 1. What you will build
 
-Version 0.2.1 is the **Inventory MVP with button-driven flows**. By the end of this guide:
+Version 0.2.2 is the **Inventory MVP with a one-command quickstart**. By the end of this guide:
 
 - The bot runs locally and connects to Telegram.
 - A PostgreSQL database exists with `users`, `categories`, `locations`, and `items` tables.
@@ -20,6 +20,38 @@ Version 0.2.1 is the **Inventory MVP with button-driven flows**. By the end of t
 - `/me` shows the account details of **registered** users.
 - **Unregistered** users are politely blocked.
 - Admin/assistant can create and update items; anyone registered can search and view; admin can archive.
+
+---
+
+## Fast path — one command (recommended)
+
+If you already have **Node.js + PostgreSQL installed**, a **database created**
+(step 5), and your **`.env` filled in** (step 7), you can skip the per-step
+commands and run a single bootstrap script. It installs dependencies, generates
+the Prisma client, applies migrations, seeds the database, and starts the bot:
+
+```bash
+# Windows (PowerShell)
+npm run quickstart:win
+
+# macOS / Linux
+npm run quickstart:sh
+```
+
+On the very first run, if no `.env` exists it creates one from `.env.example`
+and stops so you can fill in your values — then run it again. To set everything
+up **without** launching the bot, pass `-NoStart` (PowerShell) or `--no-start`
+(bash), e.g. `npm run quickstart:win -- -NoStart`.
+
+Already have `.env` and `node_modules` in place? The cross-platform shortcut
+does the same setup + start in one go:
+
+```bash
+npm run quickstart
+```
+
+Prefer to understand each step (or hit an error)? Follow the manual walkthrough
+below.
 
 ---
 
@@ -173,7 +205,7 @@ You should see:
 
 ```txt
 [Nest] LOG [PrismaService] Connected to the database
-[Nest] LOG [Bootstrap] Project Quartermaster bot is running (v0.2.1)
+[Nest] LOG [Bootstrap] Project Quartermaster bot is running (v0.2.2)
 ```
 
 The process stays running and listens to Telegram via long polling. Leave it
@@ -248,8 +280,8 @@ pm2 save
 
 ## 15. What's next
 
-See the roadmap in `Design.md` (Section 29). This release delivered **v0.2.1 —
-Inventory MVP with button-driven flows**. The next milestone is **v0.3.0 —
+See the roadmap in `Design.md` (Section 29). This release delivered **v0.2.2 —
+Inventory MVP with a one-command quickstart**. The next milestone is **v0.3.0 —
 Individual-Asset Inventory** (`ItemUnit`, per-unit codes, unit
 condition/location/availability), enabling individual tracking of monitors,
 PCs, and other unique assets.

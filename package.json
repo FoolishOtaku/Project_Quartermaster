@@ -1,7 +1,7 @@
 {
   "name": "project-quartermaster",
-  "version": "0.2.1",
-  "description": "Telegram-based inventory management bot for the ASE Software Engineering Laboratory (v0.2.1 Inventory MVP with button-driven flows).",
+  "version": "0.2.2",
+  "description": "Telegram-based inventory management bot for the ASE Software Engineering Laboratory (v0.2.2: one-command quickstart).",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -14,6 +14,10 @@
     "prisma:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "db:seed": "ts-node prisma/seed.ts",
+    "setup": "npm run prisma:generate && npm run prisma:deploy && npm run db:seed",
+    "quickstart": "npm run setup && npm run start:dev",
+    "quickstart:win": "powershell -ExecutionPolicy Bypass -File scripts/quickstart.ps1",
+    "quickstart:sh": "bash scripts/quickstart.sh",
     "test": "jest"
   },
   "prisma": {

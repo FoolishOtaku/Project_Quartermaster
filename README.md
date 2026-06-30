@@ -5,7 +5,7 @@ Laboratory** at Telkom University. It lets authorized members record, search,
 borrow, return, and report lab inventory through a Telegram bot, with an
 optional AI assistant added in later versions.
 
-> **Current release: v0.2.1 — Inventory MVP (button-driven flows).**
+> **Current release: v0.2.2 — Inventory MVP with one-command quickstart.**
 > Quantity-based inventory with categories and locations: `/add_item`,
 > `/search_item`, `/view_item`, `/update_item`, `/archive_item`. Choices are
 > made with tappable inline keyboards (with typing as a fallback), on top of the
@@ -70,7 +70,32 @@ Design.md              # Full software design document and roadmap
 
 See **[docs/QUICKSTART.md](docs/QUICKSTART.md)** for the full setup walkthrough.
 
-Quick version:
+### One command (recommended)
+
+After filling in `.env`, run the bootstrap script — it installs deps, generates
+the Prisma client, applies migrations, seeds the database, and starts the bot:
+
+```bash
+# Windows (PowerShell)
+npm run quickstart:win
+
+# macOS / Linux
+npm run quickstart:sh
+```
+
+On the very first run it creates `.env` from `.env.example` and stops so you can
+fill in `DATABASE_URL`, `TELEGRAM_BOT_TOKEN`, and `ADMIN_TELEGRAM_ID`; run it
+again afterwards. Add `-NoStart` (PowerShell) or `--no-start` (bash) to set up
+without launching the bot.
+
+If your `.env` and dependencies are already in place, the cross-platform npm
+shortcut does the same setup + start:
+
+```bash
+npm run quickstart
+```
+
+### Manual steps
 
 ```bash
 npm install
@@ -85,13 +110,17 @@ npm run start:dev
 
 | Script                   | Purpose                                  |
 | ------------------------ | ---------------------------------------- |
+| `npm run quickstart:win` | One-command setup + start (Windows).     |
+| `npm run quickstart:sh`  | One-command setup + start (macOS/Linux). |
+| `npm run quickstart`     | Setup + start (assumes .env + deps).     |
+| `npm run setup`          | Generate, migrate, seed (no start).      |
 | `npm run start:dev`      | Run the bot with auto-reload.            |
 | `npm run build`          | Compile to `dist/`.                      |
 | `npm run start:prod`     | Run the compiled bot.                    |
 | `npm run prisma:generate`| Generate the Prisma client.              |
 | `npm run prisma:migrate` | Create/apply a dev migration.            |
 | `npm run prisma:deploy`  | Apply migrations in production.          |
-| `npm run db:seed`        | Seed/refresh the admin user.             |
+| `npm run db:seed`        | Seed/refresh admin, categories, locations.|
 | `npm test`               | Run unit tests.                          |
 
 ## Documentation
