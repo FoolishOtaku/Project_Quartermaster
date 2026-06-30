@@ -58,6 +58,7 @@ model Location {
   isArchived Boolean  @default(false)
 
   items      Item[]
+  itemUnits  ItemUnit[]
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -108,6 +109,8 @@ model Item {
   notes              String?
   isArchived         Boolean            @default(false)
 
+  units              ItemUnit[]
+
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 
@@ -150,4 +153,36 @@ enum OwnerSource {
   DONATION
   PERSONAL_LOAN
   UNKNOWN
+}
+
+
+/// A single physical unit of an INDIVIDUAL_ASSET item (v0.3.0).
+/// Each unit has its own code, condition, location, and availability.
+model ItemUnit {
+  id                 String             @id @default(uuid())
+  item               Item               @relation(fields: [itemId], references: [id])
+  itemId             String
+
+  unitCode           String             @unique // e.g. ASE-MON-001-U01
+  serialNumber       String?
+  brandModel         String?
+  specs              String?
+
+  condition          ItemCondition      @default(UNKNOWN)
+  availabilityStatus AvailabilityStatus @default(AVAILABLE)
+
+  location           Location?          @relation(fields: [locationId], references: [id])
+  locationId         String?
+  storageDetail      String?
+
+  warrantyExpiry     DateTime?
+  notes              String?
+  isArchived         Boolean            @default(false)
+
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@index([itemId])
+  @@index([availabilityStatus])
+  @@map("item_units")
 }

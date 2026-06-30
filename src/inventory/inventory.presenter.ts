@@ -4,7 +4,7 @@ import {
   OwnerSource,
   TrackingType,
 } from '@prisma/client';
-import { ItemWithRelations } from './inventory.types';
+import { ItemUnitWithRelations, ItemWithRelations } from './inventory.types';
 
 export const TRACKING_TYPE_LABELS: Record<TrackingType, string> = {
   INDIVIDUAL_ASSET: 'Individual Asset',
@@ -48,24 +48,31 @@ function lowStockFlag(item: ItemWithRelations): string {
 }
 
 /** Full detail view for /view_item. */
-export function formatItemDetail(item: ItemWithRelations): string {
+export function formatItemDetail(
+  item: ItemWithRelations,
+  units?: ItemUnitWithRelations[],
+): string {
+  const isIndividual = item.trackingType === TrackingType.INDIVIDUAL_ASSET;
   const lines: (string | null)[] = [
     'Item Detail',
     '',
     `Code: ${item.code}`,
     `Name: ${item.name}`,
+    item.brandModel ? `Brand / Model: ${item.brandModel}` : null,
     `Category: ${item.category.name}`,
     item.subcategory ? `Subcategory: ${item.subcategory}` : null,
     `Tracking Type: ${TRACKING_TYPE_LABELS[item.trackingType]}`,
-    `Quantity: ${item.quantity ?? 0}${item.unit ? ` ${item.unit}` : ''}`,
-    `Available: ${item.quantityAvailable ?? 0}`,
-    item.minimumStock != null
+    isIndividual
+      ? `Units: ${item.quantityAvailable ?? 0} available / ${item.quantity ?? 0} total`
+      : `Quantity: ${item.quantity ?? 0}${item.unit ? ` ${item.unit}` : ''}`,
+    !isIndividual ? `Available: ${item.quantityAvailable ?? 0}` : null,
+    !isIndividual && item.minimumStock != null
       ? `Minimum Stock: ${item.minimumStock}${lowStockFlag(item)}`
       : null,
     `Location: ${item.location?.name ?? 'Unknown'}`,
     item.storageDetail ? `Storage Detail: ${item.storageDetail}` : null,
-    `Condition: ${CONDITION_LABELS[item.condition]}`,
-    `Availability: ${AVAILABILITY_LABELS[item.availabilityStatus]}`,
+    !isIndividual ? `Condition: ${CONDITION_LABELS[item.condition]}` : null,
+    !isIndividual ? `Availability: ${AVAILABILITY_LABELS[item.availabilityStatus]}` : null,
     `Owner / Source: ${OWNER_SOURCE_LABELS[item.ownerSource]}`,
     item.ownerName ? `Owner Name: ${item.ownerName}` : null,
     item.responsiblePic ? `Responsible PIC: ${item.responsiblePic}` : null,
@@ -73,6 +80,43 @@ export function formatItemDetail(item: ItemWithRelations): string {
     item.isArchived ? '\n(Archived)' : null,
   ];
 
+  let result = lines.filter((l): l is string => l !== null).join('\n');
+
+  if (isIndividual && units) {
+    if (units.length === 0) {
+      result += '\n\nUnits: none yet. Add one with /add_unit ' + item.code;
+    } else {
+      const unitLines = units
+        .map(
+          (u) =>
+            `• ${u.unitCode} — ${CONDITION_LABELS[u.condition]}, ${AVAILABILITY_LABELS[u.availabilityStatus]}` +
+            (u.location ? ` @ ${u.location.name}` : ''),
+        )
+        .join('\n');
+      result += `\n\nUnits (${units.length}):\n${unitLines}`;
+    }
+  }
+
+  return result;
+}
+
+/** Detail view for a single physical unit (/view_unit). */
+export function formatUnitDetail(unit: ItemUnitWithRelations): string {
+  const lines: (string | null)[] = [
+    'Unit Detail',
+    '',
+    `Unit Code: ${unit.unitCode}`,
+    `Item: ${unit.item.name} (${unit.item.code})`,
+    unit.serialNumber ? `Serial Number: ${unit.serialNumber}` : null,
+    unit.brandModel ? `Brand / Model: ${unit.brandModel}` : null,
+    unit.specs ? `Specs: ${unit.specs}` : null,
+    `Condition: ${CONDITION_LABELS[unit.condition]}`,
+    `Availability: ${AVAILABILITY_LABELS[unit.availabilityStatus]}`,
+    `Location: ${unit.location?.name ?? 'Unknown'}`,
+    unit.storageDetail ? `Storage Detail: ${unit.storageDetail}` : null,
+    unit.notes ? `Notes: ${unit.notes}` : null,
+    unit.isArchived ? '\n(Archived)' : null,
+  ];
   return lines.filter((l): l is string => l !== null).join('\n');
 }
 

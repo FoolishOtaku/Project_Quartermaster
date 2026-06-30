@@ -5,21 +5,28 @@ Laboratory** at Telkom University. It lets authorized members record, search,
 borrow, return, and report lab inventory through a Telegram bot, with an
 optional AI assistant added in later versions.
 
-> **Current release: v0.2.2 — Inventory MVP with one-command quickstart.**
-> Quantity-based inventory with categories and locations: `/add_item`,
-> `/search_item`, `/view_item`, `/update_item`, `/archive_item`. Choices are
-> made with tappable inline keyboards (with typing as a fallback), on top of the
-> v0.1.0 foundation (`/start`, `/help`, `/me`, admin seed, role guards).
+> **Current release: v0.3.0 — Individual-Asset Inventory.**
+> Track unique assets (monitors, PCs, routers) unit-by-unit with their own code,
+> condition, location, and availability — on top of the quantity-based Inventory
+> MVP (`/add_item`, `/search_item`, `/view_item`, `/update_item`,
+> `/archive_item`) and the v0.1.0 foundation (`/start`, `/help`, `/me`).
 
-## Features in v0.2.1
+## Features in v0.3.0
 
-- Inline-keyboard (button) driven `/add_item`, `/update_item`, and `/archive_item` —
-  tap to choose category, tracking type, location, condition, owner/source, and
-  to confirm; Skip/Cancel buttons for optional steps. Typing still works as a fallback.
+- Individual-asset tracking via the `ItemUnit` model: one row per physical unit.
+- `/add_item` supports the Individual Asset tracking type.
+- Unit commands: `/add_unit`, `/view_unit`, `/update_unit`, `/archive_unit`.
+- Auto-generated unit codes (`<itemCode>-U<NN>`), per-unit condition/location/availability.
+- Parent item counts stay in sync with their active units.
+
+## Features from v0.2.x
+
+- Inline-keyboard (button) driven `/add_item`, `/update_item`, `/archive_item`, and unit flows.
 - Category and Location models, seeded from the spreadsheet Lookup Lists.
 - Quantity-based items (Bulk Stock / Consumable) with auto-generated codes.
 - Search and view for any registered user; add/update for admin/assistant; archive for admin.
 - Low-stock indicator in search and detail output.
+- One-command quickstart scripts (Windows + Unix).
 
 ## Features from v0.1.0
 
@@ -46,7 +53,7 @@ optional AI assistant added in later versions.
 
 ```txt
 prisma/
-  schema.prisma        # User, Category, Location, Item + enums
+  schema.prisma        # User, Category, Location, Item, ItemUnit + enums
   seed.ts              # Admin + categories + locations seed
 src/
   main.ts              # Bootstrap (worker context)
@@ -62,6 +69,7 @@ docs/
   QUICKSTART.md        # Step-by-step setup and run guide
   REQUIREMENTS.md      # Acceptance criteria for v0.1.0
   REQUIREMENTS-0.2.0.md# Acceptance criteria for v0.2.0
+  REQUIREMENTS-0.3.0.md# Acceptance criteria for v0.3.0
   BOT_COMMANDS.md      # Command reference with example flows
 Design.md              # Full software design document and roadmap
 ```
@@ -129,6 +137,7 @@ npm run start:dev
 - [Bot commands](docs/BOT_COMMANDS.md)
 - [Requirements (v0.1.0)](docs/REQUIREMENTS.md)
 - [Requirements (v0.2.0)](docs/REQUIREMENTS-0.2.0.md)
+- [Requirements (v0.3.0)](docs/REQUIREMENTS-0.3.0.md)
 - [Design document & roadmap](Design.md)
 
 ## License

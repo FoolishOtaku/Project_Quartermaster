@@ -60,17 +60,19 @@ const STEP = {
   QUANTITY: 3,
   UNIT: 4,
   MIN_STOCK: 5,
-  LOCATION: 6,
-  STORAGE: 7,
-  CONDITION: 8,
-  OWNER: 9,
-  NOTES: 10,
-  CONFIRM: 11,
+  BRAND_MODEL: 6,
+  LOCATION: 7,
+  STORAGE: 8,
+  CONDITION: 9,
+  OWNER: 10,
+  NOTES: 11,
+  CONFIRM: 12,
 };
 
 const OPTIONAL_ADD_STEPS = new Set([
   STEP.UNIT,
   STEP.MIN_STOCK,
+  STEP.BRAND_MODEL,
   STEP.LOCATION,
   STEP.STORAGE,
   STEP.NOTES,
@@ -183,40 +185,43 @@ export class InventoryFlowService {
   private async sendAddStep(ctx: BotContext, state: ConversationState): Promise<void> {
     switch (state.step) {
       case STEP.NAME:
-        await ctx.reply('🆕 *New item* — Step 1 of 11\n\nWhat is the item name?', {
+        await ctx.reply('🆕 *New item*\n\nWhat is the item name?', {
           parse_mode: 'Markdown',
           ...Keyboards.cancelOnly(),
         });
         return;
       case STEP.CATEGORY:
-        await ctx.reply('Step 2 of 11\n\nChoose a category:', Keyboards.categories(await this.categories.listActive()));
+        await ctx.reply('Choose a category:', Keyboards.categories(await this.categories.listActive()));
         return;
       case STEP.TRACKING:
-        await ctx.reply('Step 3 of 11\n\nChoose a tracking type:', Keyboards.tracking());
+        await ctx.reply('Choose a tracking type:', Keyboards.tracking());
         return;
       case STEP.QUANTITY:
-        await ctx.reply('Step 4 of 11\n\nHow many are there? Enter a whole number.', Keyboards.cancelOnly());
+        await ctx.reply('How many are there? Enter a whole number.', Keyboards.cancelOnly());
         return;
       case STEP.UNIT:
-        await ctx.reply('Step 5 of 11\n\nUnit? (e.g. pcs, set, box). Type it, or tap Skip.', Keyboards.skipCancel());
+        await ctx.reply('Unit? (e.g. pcs, set, box). Type it, or tap Skip.', Keyboards.skipCancel('a'));
         return;
       case STEP.MIN_STOCK:
-        await ctx.reply('Step 6 of 11\n\nMinimum stock level for low-stock alerts? Enter a number, or tap Skip.', Keyboards.skipCancel());
+        await ctx.reply('Minimum stock level for low-stock alerts? Enter a number, or tap Skip.', Keyboards.skipCancel('a'));
+        return;
+      case STEP.BRAND_MODEL:
+        await ctx.reply('Brand / model? (e.g. "LG 24MP"). Type it, or tap Skip.', Keyboards.skipCancel('a'));
         return;
       case STEP.LOCATION:
-        await ctx.reply('Step 7 of 11\n\nWhere is it stored? Choose a location, or tap Skip.', Keyboards.locations(await this.locations.listActive()));
+        await ctx.reply('Where is it stored? Choose a location, or tap Skip.', Keyboards.locations(await this.locations.listActive(), 'a'));
         return;
       case STEP.STORAGE:
-        await ctx.reply('Step 8 of 11\n\nStorage detail? (e.g. "HDMI section"). Type it, or tap Skip.', Keyboards.skipCancel());
+        await ctx.reply('Storage detail? (e.g. "HDMI section"). Type it, or tap Skip.', Keyboards.skipCancel('a'));
         return;
       case STEP.CONDITION:
-        await ctx.reply('Step 9 of 11\n\nWhat condition is it in?', Keyboards.condition());
+        await ctx.reply('What condition is it in?', Keyboards.condition('a'));
         return;
       case STEP.OWNER:
-        await ctx.reply('Step 10 of 11\n\nOwner / source?', Keyboards.ownerSource());
+        await ctx.reply('Owner / source?', Keyboards.ownerSource());
         return;
       case STEP.NOTES:
-        await ctx.reply('Step 11 of 11\n\nAny notes? Type them, or tap Skip.', Keyboards.skipCancel());
+        await ctx.reply('Any notes? Type them, or tap Skip.', Keyboards.skipCancel('a'));
         return;
       case STEP.CONFIRM:
         await ctx.reply('Please review the new item:\n\n' + this.addSummary(state.data), Keyboards.confirmAdd());
@@ -255,8 +260,8 @@ export class InventoryFlowService {
 
       case STEP.TRACKING: {
         const tracking = matchEnum<TrackingType>(text, TRACKING_TYPE_LABELS);
-        if (tracking !== TrackingType.BULK_STOCK && tracking !== TrackingType.CONSUMABLE) {
-          await ctx.reply('👆 Please tap Bulk Stock or Consumable.');
+        if (!tracking) {
+          await ctx.reply('👆 Please tap Bulk Stock, Consumable, or Individual Asset.');
           return;
         }
         return this.setTracking(ctx, userId, state, tracking);
@@ -289,6 +294,10 @@ export class InventoryFlowService {
         }
         return this.addAdvance(ctx, userId, state, STEP.LOCATION);
       }
+
+      case STEP.BRAND_MODEL:
+        data.brandModel = skipped ? null : text;
+        return this.addAdvance(ctx, userId, state, STEP.LOCATION);
 
       case STEP.LOCATION: {
         const location = await this.locations.findByName(text);
@@ -359,6 +368,9 @@ export class InventoryFlowService {
         case STEP.MIN_STOCK:
           data.minimumStock = null;
           return this.addAdvance(ctx, userId, state, STEP.LOCATION);
+        case STEP.BRAND_MODEL:
+          data.brandModel = null;
+          return this.addAdvance(ctx, userId, state, STEP.LOCATION);
         case STEP.LOCATION:
           data.locationId = null;
           return this.addAdvance(ctx, userId, state, STEP.STORAGE);
@@ -427,7 +439,9 @@ export class InventoryFlowService {
 
   private setTracking(ctx: BotContext, userId: string, state: ConversationState, tracking: TrackingType) {
     state.data.trackingType = tracking;
-    return this.addAdvance(ctx, userId, state, STEP.QUANTITY);
+    const next =
+      tracking === TrackingType.INDIVIDUAL_ASSET ? STEP.BRAND_MODEL : STEP.QUANTITY;
+    return this.addAdvance(ctx, userId, state, next);
   }
 
   private setLocation(ctx: BotContext, userId: string, state: ConversationState, id: string) {
@@ -458,6 +472,7 @@ export class InventoryFlowService {
       categoryId: data.categoryId as string,
       categoryName: data.categoryName as string,
       trackingType: data.trackingType as TrackingType,
+      brandModel: (data.brandModel as string | null) ?? null,
       quantity: data.quantity as number,
       unit: (data.unit as string | null) ?? null,
       minimumStock: (data.minimumStock as number | null) ?? null,
@@ -478,17 +493,23 @@ export class InventoryFlowService {
   }
 
   private addSummary(data: Record<string, unknown>): string {
+    const isIndividual = data.trackingType === TrackingType.INDIVIDUAL_ASSET;
     return [
       `Name: ${data.name as string}`,
       `Category: ${data.categoryName as string}`,
       `Tracking: ${TRACKING_TYPE_LABELS[data.trackingType as TrackingType]}`,
-      `Quantity: ${data.quantity as number}${data.unit ? ` ${data.unit as string}` : ''}`,
-      data.minimumStock != null ? `Minimum Stock: ${data.minimumStock as number}` : null,
+      isIndividual
+        ? (data.brandModel ? `Brand / Model: ${data.brandModel as string}` : null)
+        : `Quantity: ${data.quantity as number}${data.unit ? ` ${data.unit as string}` : ''}`,
+      !isIndividual && data.minimumStock != null
+        ? `Minimum Stock: ${data.minimumStock as number}`
+        : null,
       data.locationId ? null : 'Location: Unknown',
       data.storageDetail ? `Storage Detail: ${data.storageDetail as string}` : null,
       `Condition: ${CONDITION_LABELS[data.condition as ItemCondition]}`,
       `Owner / Source: ${OWNER_SOURCE_LABELS[data.ownerSource as OwnerSource]}`,
       data.notes ? `Notes: ${data.notes as string}` : null,
+      isIndividual ? '\nAfter creating, add physical units with /add_unit.' : null,
     ]
       .filter((l): l is string => l !== null)
       .join('\n');

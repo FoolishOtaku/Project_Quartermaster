@@ -1,4 +1,4 @@
-import { categoryPrefix, codePrefix, nextItemCode } from './item-code.util';
+import { categoryPrefix, codePrefix, nextItemCode, nextUnitCode } from './item-code.util';
 
 describe('item-code util', () => {
   describe('categoryPrefix', () => {
@@ -39,6 +39,22 @@ describe('item-code util', () => {
     it('zero-pads to three digits but grows beyond', () => {
       const existing = ['ASE-CABL-999'];
       expect(nextItemCode('Cable', existing)).toBe('ASE-CABL-1000');
+    });
+  });
+
+  describe('nextUnitCode', () => {
+    it('starts at U01 when no units exist', () => {
+      expect(nextUnitCode('ASE-MON-001', [])).toBe('ASE-MON-001-U01');
+    });
+
+    it('increments past the highest existing unit', () => {
+      const existing = ['ASE-MON-001-U01', 'ASE-MON-001-U02'];
+      expect(nextUnitCode('ASE-MON-001', existing)).toBe('ASE-MON-001-U03');
+    });
+
+    it('ignores unit codes from other items', () => {
+      const existing = ['ASE-MON-002-U05', 'ASE-MON-001-U01'];
+      expect(nextUnitCode('ASE-MON-001', existing)).toBe('ASE-MON-001-U02');
     });
   });
 });

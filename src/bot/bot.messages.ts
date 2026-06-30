@@ -27,13 +27,21 @@ export const BOT_MESSAGES = {
     '/update_item <code> — Update an item (admin/assistant)',
     '/archive_item <code> — Archive an item (admin)',
     '',
+    'Individual-asset units:',
+    '/view_unit <unitCode> — Show a single physical unit',
+    '/add_unit <itemCode> — Add a unit to an asset (admin/assistant)',
+    '/update_unit <unitCode> — Update a unit (admin/assistant)',
+    '/archive_unit <unitCode> — Archive a unit (admin)',
+    '',
     'During a multi-step flow, send /cancel to stop.',
     'Access depends on your assigned role.',
   ].join('\n'),
 
   SEARCH_USAGE: 'Usage: /search_item <keyword>\nExample: /search_item hdmi',
   VIEW_USAGE: 'Usage: /view_item <code>\nExample: /view_item ASE-CAB-001',
+  VIEW_UNIT_USAGE: 'Usage: /view_unit <unitCode>\nExample: /view_unit ASE-MON-001-U01',
   ITEM_NOT_FOUND: 'I could not find that item. Try another code or keyword.',
+  UNIT_NOT_FOUND: 'I could not find that unit. Check the unit code and try again.',
 
   NOT_REGISTERED:
     'You are not registered. Please contact the admin to get access.',

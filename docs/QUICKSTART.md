@@ -1,4 +1,4 @@
-# Project Quartermaster — Quickstart (v0.2.2)
+# Project Quartermaster — Quickstart (v0.3.0)
 
 This guide takes you from a clean checkout to a running Telegram bot with
 working general commands (`/start`, `/help`, `/me`), a seeded admin account,
@@ -11,7 +11,7 @@ Estimated time: **15–25 minutes.**
 
 ## 1. What you will build
 
-Version 0.2.2 is the **Inventory MVP with a one-command quickstart**. By the end of this guide:
+Version 0.3.0 adds **individual-asset inventory** on top of the Inventory MVP. By the end of this guide:
 
 - The bot runs locally and connects to Telegram.
 - A PostgreSQL database exists with `users`, `categories`, `locations`, and `items` tables.
@@ -205,7 +205,7 @@ You should see:
 
 ```txt
 [Nest] LOG [PrismaService] Connected to the database
-[Nest] LOG [Bootstrap] Project Quartermaster bot is running (v0.2.2)
+[Nest] LOG [Bootstrap] Project Quartermaster bot is running (v0.3.0)
 ```
 
 The process stays running and listens to Telegram via long polling. Leave it
@@ -234,6 +234,12 @@ account that has not been seeded.
 /view_item ASE-CABL-001  → see full detail (use the code from /add_item)
 /update_item ASE-CABL-001 → change a field
 /archive_item ASE-CABL-001 → archive it (admin only)
+
+# Individual assets (pick "Individual Asset" in /add_item):
+/add_unit ASE-MON-001        → add a physical unit (generates ASE-MON-001-U01)
+/view_unit ASE-MON-001-U01   → see one unit
+/update_unit ASE-MON-001-U01 → change condition/availability/location
+/archive_unit ASE-MON-001-U01 → archive a unit (admin only)
 ```
 
 Send `/cancel` during any guided flow to stop. A viewer/trusted-member account
@@ -280,10 +286,9 @@ pm2 save
 
 ## 15. What's next
 
-See the roadmap in `Design.md` (Section 29). This release delivered **v0.2.2 —
-Inventory MVP with a one-command quickstart**. The next milestone is **v0.3.0 —
-Individual-Asset Inventory** (`ItemUnit`, per-unit codes, unit
-condition/location/availability), enabling individual tracking of monitors,
-PCs, and other unique assets.
+See the roadmap in `Design.md` (Section 29). This release delivered **v0.3.0 —
+Individual-Asset Inventory** (the `ItemUnit` model and `/add_unit`,
+`/view_unit`, `/update_unit`, `/archive_unit`). The next milestone is **v0.4.0 —
+Borrowing System** (`/borrow_item`, `/return_item`, `/who_has`, `/my_borrowed`).
 
 For the full command reference, see [BOT_COMMANDS.md](BOT_COMMANDS.md).

@@ -4,6 +4,7 @@ import { BotService } from './bot.service';
 import { InventoryUpdate } from './inventory.update';
 import { ConversationService } from './conversation/conversation.service';
 import { InventoryFlowService } from './flows/inventory-flow.service';
+import { UnitFlowService } from './flows/unit-flow.service';
 import { UsersModule } from '../users/users.module';
 import { InventoryModule } from '../inventory/inventory.module';
 import { CategoriesModule } from '../categories/categories.module';
@@ -19,6 +20,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
     InventoryUpdate,
     ConversationService,
     InventoryFlowService,
+    UnitFlowService,
     RegisteredGuard,
     RolesGuard,
   ],

@@ -2,19 +2,19 @@ import { Category, Location } from '@prisma/client';
 import { Markup } from 'telegraf';
 import { InlineKeyboardButton } from 'telegraf/types';
 import {
+  AVAILABILITY_LABELS,
   CONDITION_LABELS,
   OWNER_SOURCE_LABELS,
 } from '../../inventory/inventory.presenter';
 
 /**
  * Callback-data scheme: `qm|<flow>|<action>|<value>`.
- * Flow tags: a = add, u = update, x = archive. `qm|cancel` cancels any flow.
- * Values that are enum keys or UUIDs stay well under Telegram's 64-byte limit.
+ * Flow tags: a = add item, n = add unit, u = update item, m = update unit,
+ * x = archive item, r = archive unit. `qm|cancel` cancels any flow.
  */
 export const CB = {
   NS: 'qm',
   CANCEL: 'qm|cancel',
-  SKIP_ADD: 'qm|a|skip',
 };
 
 type Btn = InlineKeyboardButton;
@@ -28,15 +28,15 @@ function chunk<T>(items: T[], perRow: number): T[][] {
 }
 
 const cancelRow = (): Btn[] => [Markup.button.callback('❌ Cancel', CB.CANCEL)];
-const skipCancelRow = (): Btn[] => [
-  Markup.button.callback('⏭ Skip', CB.SKIP_ADD),
+const skipCancelRow = (flow: string): Btn[] => [
+  Markup.button.callback('⏭ Skip', `qm|${flow}|skip`),
   Markup.button.callback('❌ Cancel', CB.CANCEL),
 ];
 
 export const Keyboards = {
   cancelOnly: () => Markup.inlineKeyboard([cancelRow()]),
 
-  skipCancel: () => Markup.inlineKeyboard([skipCancelRow()]),
+  skipCancel: (flow = 'a') => Markup.inlineKeyboard([skipCancelRow(flow)]),
 
   categories: (categories: Category[]) => {
     const buttons = categories.map((c) =>
@@ -51,31 +51,49 @@ export const Keyboards = {
         Markup.button.callback('📦 Bulk Stock', 'qm|a|trk|BULK_STOCK'),
         Markup.button.callback('🧴 Consumable', 'qm|a|trk|CONSUMABLE'),
       ],
+      [Markup.button.callback('🖥 Individual Asset', 'qm|a|trk|INDIVIDUAL_ASSET')],
       cancelRow(),
     ]),
 
-  locations: (locations: Location[]) => {
+  locations: (locations: Location[], flow = 'a') => {
     const buttons = locations.map((l) =>
-      Markup.button.callback(l.name, `qm|a|loc|${l.id}`),
+      Markup.button.callback(l.name, `qm|${flow}|loc|${l.id}`),
     );
     return Markup.inlineKeyboard([
       ...chunk(buttons, 2),
-      [Markup.button.callback('⏭ Skip (Unknown)', CB.SKIP_ADD)],
+      [Markup.button.callback('⏭ Skip (Unknown)', `qm|${flow}|skip`)],
       cancelRow(),
     ]);
   },
 
-  // Conditions sensible for a newly added item.
-  condition: () => {
+  condition: (flow = 'a') => {
     const keys: (keyof typeof CONDITION_LABELS)[] = [
       'NEW',
       'GOOD',
       'FAIR',
       'NEEDS_REPAIR',
       'BROKEN',
+      'LOST',
+      'UNKNOWN',
     ];
     const buttons = keys.map((k) =>
-      Markup.button.callback(CONDITION_LABELS[k], `qm|a|con|${k}`),
+      Markup.button.callback(CONDITION_LABELS[k], `qm|${flow}|con|${k}`),
+    );
+    return Markup.inlineKeyboard([...chunk(buttons, 2), cancelRow()]);
+  },
+
+  availability: (flow = 'm') => {
+    const keys: (keyof typeof AVAILABILITY_LABELS)[] = [
+      'AVAILABLE',
+      'IN_USE',
+      'BORROWED',
+      'MAINTENANCE',
+      'MISSING',
+      'RETIRED',
+      'DISPOSED',
+    ];
+    const buttons = keys.map((k) =>
+      Markup.button.callback(AVAILABILITY_LABELS[k], `qm|${flow}|avl|${k}`),
     );
     return Markup.inlineKeyboard([...chunk(buttons, 2), cancelRow()]);
   },
@@ -102,19 +120,28 @@ export const Keyboards = {
       ],
     ]),
 
-  // Update: field picker.
   updateFields: (fields: readonly string[]) => {
-    const buttons = fields.map((f, i) =>
-      Markup.button.callback(f, `qm|u|fld|${i}`),
-    );
+    const buttons = fields.map((f, i) => Markup.button.callback(f, `qm|u|fld|${i}`));
     return Markup.inlineKeyboard([...chunk(buttons, 2), cancelRow()]);
   },
 
-  // Archive: confirm.
+  updateUnitFields: (fields: readonly string[]) => {
+    const buttons = fields.map((f, i) => Markup.button.callback(f, `qm|m|fld|${i}`));
+    return Markup.inlineKeyboard([...chunk(buttons, 2), cancelRow()]);
+  },
+
   confirmArchive: () =>
     Markup.inlineKeyboard([
       [
         Markup.button.callback('✅ Yes, archive', 'qm|x|yes'),
+        Markup.button.callback('❌ Cancel', CB.CANCEL),
+      ],
+    ]),
+
+  confirmArchiveUnit: () =>
+    Markup.inlineKeyboard([
+      [
+        Markup.button.callback('✅ Yes, archive', 'qm|r|yes'),
         Markup.button.callback('❌ Cancel', CB.CANCEL),
       ],
     ]),

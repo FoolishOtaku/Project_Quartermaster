@@ -47,3 +47,29 @@ export function nextItemCode(
   const next = max + 1;
   return `${prefix}${String(next).padStart(3, '0')}`;
 }
+
+/** Literal prefix for a unit code, e.g. "ASE-MON-001-U". */
+export function unitCodePrefix(itemCode: string): string {
+  return `${itemCode}-U`;
+}
+
+/**
+ * Next unit code for an item, e.g. ASE-MON-001-U01.
+ * Sequence numbers are zero-padded to at least 2 digits.
+ */
+export function nextUnitCode(itemCode: string, existingUnitCodes: string[]): string {
+  const prefix = unitCodePrefix(itemCode);
+  let max = 0;
+
+  for (const code of existingUnitCodes) {
+    if (!code.startsWith(prefix)) {
+      continue;
+    }
+    const n = Number.parseInt(code.slice(prefix.length), 10);
+    if (Number.isInteger(n) && n > max) {
+      max = n;
+    }
+  }
+
+  return `${prefix}${String(max + 1).padStart(2, '0')}`;
+}

@@ -11,7 +11,7 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.createApplicationContext(AppModule);
   app.enableShutdownHooks();
 
-  logger.log('Project Quartermaster bot is running (v0.2.2)');
+  logger.log('Project Quartermaster bot is running (v0.3.0)');
 }
 
 bootstrap().catch((error) => {

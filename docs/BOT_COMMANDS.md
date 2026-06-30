@@ -1,4 +1,4 @@
-# Bot Commands (v0.2.1)
+# Bot Commands (v0.3.0)
 
 All commands require you to be a **registered, active** user. Write actions are
 role-gated. Most choices are made by **tapping inline buttons**; you can also
@@ -22,6 +22,22 @@ multi-step flow, and **⏭ Skip** to leave an optional field blank.
 | `/add_item`              | Admin, Assistant  | Guided flow to create an item.               |
 | `/update_item [code]`    | Admin, Assistant  | Guided flow to update one field.             |
 | `/archive_item [code]`   | Admin             | Confirm, then soft-delete (archive).         |
+
+## Individual-asset units
+
+Pick **Individual Asset** as the tracking type in `/add_item` to create an asset
+that is tracked unit-by-unit (e.g. monitors, PCs). Then add physical units:
+
+| Command                    | Access            | Description                                   |
+| -------------------------- | ----------------- | --------------------------------------------- |
+| `/view_unit <unitCode>`    | Registered        | Show one physical unit.                       |
+| `/add_unit <itemCode>`     | Admin, Assistant  | Add a unit to an individual-asset item.       |
+| `/update_unit <unitCode>`  | Admin, Assistant  | Update a unit's condition/availability/etc.   |
+| `/archive_unit <unitCode>` | Admin             | Confirm, then soft-delete a unit.             |
+
+Unit codes are generated as `<itemCode>-U<NN>` (e.g. `ASE-MON-001-U01`). The
+parent item's available/total counts are kept in sync as units are added,
+updated, or archived.
 
 ---
 
@@ -146,3 +162,43 @@ Bot:  ✅ Archived "HDMI Cable" (ASE-CABL-001).
 Codes are generated automatically as `ASE-<PREFIX>-<NNN>`, where `<PREFIX>` is
 derived from the category name (up to 4 letters) and `<NNN>` is the next free
 sequence for that prefix. Examples: `ASE-CABL-001`, `ASE-MONI-002`.
+
+
+## Individual asset + units (example)
+
+```txt
+You:  /add_item
+Bot:  🆕 New item — What is the item name?
+You:  LG 24 inch Monitor
+Bot:  Choose a category:          (tap) Monitor
+Bot:  Choose a tracking type:
+      [ 📦 Bulk Stock ] [ 🧴 Consumable ]
+      [ 🖥 Individual Asset ]
+You:  (tap) 🖥 Individual Asset
+Bot:  Brand / model? ...          You: LG 24MP
+Bot:  Where is it stored? ...     (tap) ASE Lab Room
+Bot:  Storage detail? ...         (tap) ⏭ Skip
+Bot:  What condition is it in?    (tap) Good
+Bot:  Owner / source?             (tap) Lab Purchase
+Bot:  Any notes? ...              (tap) ⏭ Skip
+Bot:  Please review ...           [ ✅ Confirm ]
+You:  (tap) ✅ Confirm
+Bot:  ✅ Item created successfully.  Code: ASE-MON-001
+
+You:  /add_unit ASE-MON-001
+Bot:  Serial number? ...          You: SN-12345
+Bot:  Condition of this unit?     (tap) Good
+Bot:  Where is this unit stored?  (tap) ASE Lab Room
+Bot:  Storage detail? ...         (tap) ⏭ Skip
+Bot:  Any notes? ...              (tap) ⏭ Skip
+Bot:  ✅ Unit added.
+      Unit Code: ASE-MON-001-U01
+      Item: LG 24 inch Monitor (ASE-MON-001)
+      Condition: Good, Availability: Available
+
+You:  /view_item ASE-MON-001
+Bot:  Item Detail ...
+      Units: 1 available / 1 total
+      Units (1):
+      • ASE-MON-001-U01 — Good, Available @ ASE Lab Room
+```

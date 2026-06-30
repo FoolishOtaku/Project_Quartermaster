@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-export type ConversationFlow = 'ADD_ITEM' | 'UPDATE_ITEM' | 'ARCHIVE_ITEM';
+export type ConversationFlow =
+  | 'ADD_ITEM'
+  | 'UPDATE_ITEM'
+  | 'ARCHIVE_ITEM'
+  | 'ADD_UNIT'
+  | 'UPDATE_UNIT'
+  | 'ARCHIVE_UNIT';
 
 export interface ConversationState {
   flow: ConversationFlow;
