@@ -1,7 +1,9 @@
-# Project Quartermaster — Quickstart (v0.1.0)
+# Project Quartermaster — Quickstart (v0.2.0)
 
-This guide takes you from a clean checkout to a running Telegram bot with a
-working `/start`, `/help`, and `/me`, plus a seeded admin account.
+This guide takes you from a clean checkout to a running Telegram bot with
+working general commands (`/start`, `/help`, `/me`), a seeded admin account,
+seeded categories/locations, and the inventory commands (`/add_item`,
+`/search_item`, `/view_item`, `/update_item`, `/archive_item`).
 
 Estimated time: **15–25 minutes.**
 
@@ -9,14 +11,15 @@ Estimated time: **15–25 minutes.**
 
 ## 1. What you will build
 
-Version 0.1.0 is the **Bot Foundation**. By the end of this guide:
+Version 0.2.0 is the **Inventory MVP**. By the end of this guide:
 
 - The bot runs locally and connects to Telegram.
-- A PostgreSQL database exists with a `users` table.
-- One **admin** user is seeded.
+- A PostgreSQL database exists with `users`, `categories`, `locations`, and `items` tables.
+- One **admin** user is seeded, along with the initial categories and locations.
 - `/start` and `/help` work for anyone.
 - `/me` shows the account details of **registered** users.
 - **Unregistered** users are politely blocked.
+- Admin/assistant can create and update items; anyone registered can search and view; admin can archive.
 
 ---
 
@@ -128,7 +131,7 @@ npm run prisma:generate
 npm run prisma:migrate
 ```
 
-When prompted for a migration name, enter something like `init_user`.
+When prompted for a migration name, enter something like `init`.
 
 You should now have a `users` table. Verify with Prisma Studio (optional):
 
@@ -148,10 +151,13 @@ Expected output:
 
 ```txt
 Seeded admin user: Your Name (telegramId=987654321, role=ADMIN)
+Seeded 13 categories.
+Seeded 10 locations.
 ```
 
-This reads `ADMIN_TELEGRAM_ID` and `ADMIN_FULL_NAME` from `.env`. Running it
-again is safe — it upserts (updates) the same admin.
+This reads `ADMIN_TELEGRAM_ID` and `ADMIN_FULL_NAME` from `.env`, and seeds the
+categories and locations from the spreadsheet Lookup Lists. Running it again is
+safe — it upserts the same records.
 
 ---
 
@@ -167,7 +173,7 @@ You should see:
 
 ```txt
 [Nest] LOG [PrismaService] Connected to the database
-[Nest] LOG [Bootstrap] Project Quartermaster bot is running (v0.1.0)
+[Nest] LOG [Bootstrap] Project Quartermaster bot is running (v0.2.0)
 ```
 
 The process stays running and listens to Telegram via long polling. Leave it
@@ -187,6 +193,19 @@ Open a chat with **your bot** (the username from step 3).
 
 To test the unregistered case, message the bot from a **different** Telegram
 account that has not been seeded.
+
+### Try the inventory commands (as admin)
+
+```txt
+/add_item            → follow the guided steps to create an item
+/search_item hdmi    → find items by keyword
+/view_item ASE-CABL-001  → see full detail (use the code from /add_item)
+/update_item ASE-CABL-001 → change a field
+/archive_item ASE-CABL-001 → archive it (admin only)
+```
+
+Send `/cancel` during any guided flow to stop. A viewer/trusted-member account
+can use `/search_item` and `/view_item` but is refused the write commands.
 
 ---
 
@@ -229,6 +248,9 @@ pm2 save
 
 ## 15. What's next
 
-See the roadmap in `Design.md` (Section 29). The next milestone is **v0.2.0 —
-Inventory MVP** (`/add_item`, `/search_item`, `/view_item`, `/update_item`,
-`/archive_item`, plus category and location support).
+See the roadmap in `Design.md` (Section 29). This release delivered **v0.2.0 —
+Inventory MVP**. The next milestone is **v0.3.0 — Individual-Asset Inventory**
+(`ItemUnit`, per-unit codes, unit condition/location/availability), enabling
+individual tracking of monitors, PCs, and other unique assets.
+
+For the full command reference, see [BOT_COMMANDS.md](BOT_COMMANDS.md).

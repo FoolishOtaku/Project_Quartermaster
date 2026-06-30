@@ -5,18 +5,27 @@ Laboratory** at Telkom University. It lets authorized members record, search,
 borrow, return, and report lab inventory through a Telegram bot, with an
 optional AI assistant added in later versions.
 
-> **Current release: v0.1.0 — Bot Foundation.**
-> Runnable bot with `/start`, `/help`, `/me`, an admin seed user, and
-> role-based access foundations.
+> **Current release: v0.2.0 — Inventory MVP.**
+> Quantity-based inventory with categories and locations: `/add_item`,
+> `/search_item`, `/view_item`, `/update_item`, `/archive_item`, on top of the
+> v0.1.0 foundation (`/start`, `/help`, `/me`, admin seed, role guards).
 
-## Features in v0.1.0
+## Features in v0.2.0
+
+- Category and Location models, seeded from the spreadsheet Lookup Lists.
+- Quantity-based items (Bulk Stock / Consumable) with auto-generated codes.
+- Inventory commands with guided multi-step flows and role-gated writes.
+- Search and view for any registered user; add/update for admin/assistant; archive for admin.
+- Low-stock indicator in search and detail output.
+
+## Features from v0.1.0
 
 - NestJS (TypeScript) modular monolith.
 - PostgreSQL + Prisma ORM.
 - Telegram bot via Telegraf (`nestjs-telegraf`).
 - Commands: `/start`, `/help`, `/me`.
 - Admin seed user from environment variables.
-- Registration check + basic role-checking guards.
+- Registration check + role-checking guards.
 - Unit tests for core service logic.
 
 ## Tech stack
@@ -34,18 +43,23 @@ optional AI assistant added in later versions.
 
 ```txt
 prisma/
-  schema.prisma        # User model + UserRole enum
-  seed.ts              # Admin seed script
+  schema.prisma        # User, Category, Location, Item + enums
+  seed.ts              # Admin + categories + locations seed
 src/
   main.ts              # Bootstrap (worker context)
-  app.module.ts        # Root module (config, Telegraf, Prisma, Users, Bot)
+  app.module.ts        # Root module
   prisma/              # PrismaModule + PrismaService
-  users/               # UsersModule, service, repository, types
-  bot/                 # BotModule, update handlers, service, messages, context
+  users/               # UsersModule, service, repository
+  categories/          # CategoriesModule, service, repository
+  locations/           # LocationsModule, service, repository
+  inventory/           # InventoryModule: service, repository, item-code util, presenter, types
+  bot/                 # Bot updates, services, messages, conversation state + flows
   common/              # Guards, decorators, constants (role checking)
 docs/
   QUICKSTART.md        # Step-by-step setup and run guide
-  REQUIREMENTS.md      # Scope and acceptance criteria for v0.1.0
+  REQUIREMENTS.md      # Acceptance criteria for v0.1.0
+  REQUIREMENTS-0.2.0.md# Acceptance criteria for v0.2.0
+  BOT_COMMANDS.md      # Command reference with example flows
 Design.md              # Full software design document and roadmap
 ```
 
@@ -80,7 +94,9 @@ npm run start:dev
 ## Documentation
 
 - [Quickstart](docs/QUICKSTART.md)
+- [Bot commands](docs/BOT_COMMANDS.md)
 - [Requirements (v0.1.0)](docs/REQUIREMENTS.md)
+- [Requirements (v0.2.0)](docs/REQUIREMENTS-0.2.0.md)
 - [Design document & roadmap](Design.md)
 
 ## License

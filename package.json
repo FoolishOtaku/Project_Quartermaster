@@ -1,7 +1,7 @@
 {
   "name": "project-quartermaster",
-  "version": "0.1.0",
-  "description": "Telegram-based inventory management bot for the ASE Software Engineering Laboratory (v0.1.0 Bot Foundation).",
+  "version": "0.2.0",
+  "description": "Telegram-based inventory management bot for the ASE Software Engineering Laboratory (v0.2.0 Inventory MVP).",
   "license": "MIT",
   "private": true,
   "scripts": {

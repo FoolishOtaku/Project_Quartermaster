@@ -20,7 +20,7 @@ export class BotUpdate {
   /** /help — open to everyone. */
   @Help()
   async onHelp(@Ctx() ctx: BotContext): Promise<void> {
-    await ctx.reply(BOT_MESSAGES.HELP, { parse_mode: 'Markdown' });
+    await ctx.reply(BOT_MESSAGES.HELP);
   }
 
   /** /me — registered, active users only. */

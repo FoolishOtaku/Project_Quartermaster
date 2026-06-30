@@ -1,7 +1,8 @@
 // Project Quartermaster — Prisma schema
-// Version 0.1.0 (Bot Foundation): only the User model is required.
-// Later versions add Category, Location, Item, ItemUnit, BorrowRecord,
-// MaintenanceLog, AuditLog, and AiPendingAction (see Design.md).
+// Version 0.2.0 (Inventory MVP): adds Category, Location, and quantity-based
+// Item (BULK_STOCK / CONSUMABLE). Unit-based assets (ItemUnit) arrive in
+// v0.3.0; BorrowRecord/MaintenanceLog/AuditLog/AiPendingAction in later
+// versions (see Design.md).
 
 generator client {
   provider = "prisma-client-js"
@@ -34,4 +35,119 @@ enum UserRole {
   ASSISTANT
   TRUSTED_MEMBER
   VIEWER
+}
+
+/// Item categories (seeded from the spreadsheet Lookup Lists). Soft-deletable.
+model Category {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  isArchived Boolean  @default(false)
+
+  items      Item[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("categories")
+}
+
+/// Physical storage locations (seeded from Lookup Lists). Soft-deletable.
+model Location {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  isArchived Boolean  @default(false)
+
+  items      Item[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("locations")
+}
+
+/// Inventory item. v0.2.0 focuses on quantity-based tracking
+/// (BULK_STOCK / CONSUMABLE). Per-unit assets use ItemUnit from v0.3.0.
+model Item {
+  id                 String             @id @default(uuid())
+  code               String             @unique // e.g. ASE-CAB-001
+  name               String
+  category           Category           @relation(fields: [categoryId], references: [id])
+  categoryId         String
+  subcategory        String?
+  trackingType       TrackingType
+  brandModel         String?
+  description        String?
+  serialNumber       String?
+  assetTag           String?
+
+  quantity           Int?
+  quantityAvailable  Int?
+  unit               String?
+  minimumStock       Int?
+
+  condition          ItemCondition      @default(UNKNOWN)
+  availabilityStatus AvailabilityStatus @default(AVAILABLE)
+
+  location           Location?          @relation(fields: [locationId], references: [id])
+  locationId         String?
+  storageDetail      String?
+
+  responsiblePic     String?
+  ownerSource        OwnerSource        @default(UNKNOWN)
+  ownerName          String?
+
+  acquiredAt         DateTime?
+  purchasePrice      Decimal?
+  warrantyExpiry     DateTime?
+
+  lastCheckedDate    DateTime?
+  checkFrequencyDays Int?
+  nextCheckDue       DateTime?
+
+  photoLink          String?
+  notes              String?
+  isArchived         Boolean            @default(false)
+
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@index([name])
+  @@index([categoryId])
+  @@index([locationId])
+  @@index([availabilityStatus])
+  @@map("items")
+}
+
+enum TrackingType {
+  INDIVIDUAL_ASSET
+  BULK_STOCK
+  CONSUMABLE
+}
+
+enum ItemCondition {
+  NEW
+  GOOD
+  FAIR
+  NEEDS_REPAIR
+  BROKEN
+  LOST
+  UNKNOWN
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  IN_USE
+  BORROWED
+  MAINTENANCE
+  MISSING
+  RETIRED
+  DISPOSED
+}
+
+enum OwnerSource {
+  LAB_PURCHASE
+  UNIVERSITY_ASSET
+  DONATION
+  PERSONAL_LOAN
+  UNKNOWN
 }
