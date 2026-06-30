@@ -30,5 +30,8 @@ prisma/*.db-journal
 # Excel lock files
 ~$*.xlsx
 
+# Agent handoff notes (local only)
+CLAUDE.md
+
 # Keep the example env in version control
 !.env.example
