@@ -1,4 +1,4 @@
-# Project Quartermaster — Quickstart (v0.3.0)
+# Project Quartermaster — Quickstart (v0.4.0)
 
 This guide takes you from a clean checkout to a running Telegram bot with
 working general commands (`/start`, `/help`, `/me`), a seeded admin account,
@@ -11,7 +11,7 @@ Estimated time: **15–25 minutes.**
 
 ## 1. What you will build
 
-Version 0.3.0 adds **individual-asset inventory** on top of the Inventory MVP. By the end of this guide:
+Version 0.4.0 adds the **borrowing system** on top of the inventory. By the end of this guide:
 
 - The bot runs locally and connects to Telegram.
 - A PostgreSQL database exists with `users`, `categories`, `locations`, and `items` tables.
@@ -205,7 +205,7 @@ You should see:
 
 ```txt
 [Nest] LOG [PrismaService] Connected to the database
-[Nest] LOG [Bootstrap] Project Quartermaster bot is running (v0.3.0)
+[Nest] LOG [Bootstrap] Project Quartermaster bot is running (v0.4.0)
 ```
 
 The process stays running and listens to Telegram via long polling. Leave it
@@ -240,6 +240,12 @@ account that has not been seeded.
 /view_unit ASE-MON-001-U01   → see one unit
 /update_unit ASE-MON-001-U01 → change condition/availability/location
 /archive_unit ASE-MON-001-U01 → archive a unit (admin only)
+
+# Borrowing (everyone except Viewer):
+/borrow_item ASE-CABL-001    → borrow a quantity (or a unit code to borrow a unit)
+/my_borrowed                 → what you currently hold
+/who_has ASE-CABL-001        → who is borrowing an item
+/return_item                 → return one of your borrows
 ```
 
 Send `/cancel` during any guided flow to stop. A viewer/trusted-member account
@@ -286,9 +292,9 @@ pm2 save
 
 ## 15. What's next
 
-See the roadmap in `Design.md` (Section 29). This release delivered **v0.3.0 —
-Individual-Asset Inventory** (the `ItemUnit` model and `/add_unit`,
-`/view_unit`, `/update_unit`, `/archive_unit`). The next milestone is **v0.4.0 —
+See the roadmap in `Design.md` (Section 29). This release delivered **v0.4.0 —
 Borrowing System** (`/borrow_item`, `/return_item`, `/who_has`, `/my_borrowed`).
+The next milestone is **v0.5.0 — Reports** (inventory summary, borrowed,
+damaged, low stock, ownership; CSV export).
 
 For the full command reference, see [BOT_COMMANDS.md](BOT_COMMANDS.md).

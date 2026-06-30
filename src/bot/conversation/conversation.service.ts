@@ -6,7 +6,9 @@ export type ConversationFlow =
   | 'ARCHIVE_ITEM'
   | 'ADD_UNIT'
   | 'UPDATE_UNIT'
-  | 'ARCHIVE_UNIT';
+  | 'ARCHIVE_UNIT'
+  | 'BORROW_ITEM'
+  | 'RETURN_ITEM';
 
 export interface ConversationState {
   flow: ConversationFlow;

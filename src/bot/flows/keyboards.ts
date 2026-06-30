@@ -145,4 +145,36 @@ export const Keyboards = {
         Markup.button.callback('❌ Cancel', CB.CANCEL),
       ],
     ]),
+
+  // ---- Borrowing (flow 'b') / Returning (flow 't') -----------------------
+
+  borrowUnits: (units: { unitCode: string }[]) => {
+    const buttons = units.map((u) => Markup.button.callback(u.unitCode, `qm|b|unit|${u.unitCode}`));
+    return Markup.inlineKeyboard([...chunk(buttons, 1), cancelRow()]);
+  },
+
+  confirmBorrow: () =>
+    Markup.inlineKeyboard([
+      [
+        Markup.button.callback('✅ Confirm', 'qm|b|cfm|yes'),
+        Markup.button.callback('❌ Cancel', CB.CANCEL),
+      ],
+    ]),
+
+  returnRecords: (records: { id: string; label: string }[]) => {
+    const buttons = records.map((r) => Markup.button.callback(r.label, `qm|t|rec|${r.id}`));
+    return Markup.inlineKeyboard([...chunk(buttons, 1), cancelRow()]);
+  },
+
+  returnCondition: () => {
+    const opts: [string, string][] = [
+      ['Good', 'GOOD'],
+      ['Same as borrowed', 'SAME_AS_BORROWED'],
+      ['Damaged', 'DAMAGED'],
+      ['Needs Repair', 'NEEDS_REPAIR'],
+      ['Missing', 'MISSING'],
+    ];
+    const buttons = opts.map(([label, key]) => Markup.button.callback(label, `qm|t|cond|${key}`));
+    return Markup.inlineKeyboard([...chunk(buttons, 2), cancelRow()]);
+  },
 };

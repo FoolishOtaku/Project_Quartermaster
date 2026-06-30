@@ -1,4 +1,4 @@
-# Bot Commands (v0.3.0)
+# Bot Commands (v0.4.0)
 
 All commands require you to be a **registered, active** user. Write actions are
 role-gated. Most choices are made by **tapping inline buttons**; you can also
@@ -38,6 +38,40 @@ that is tracked unit-by-unit (e.g. monitors, PCs). Then add physical units:
 Unit codes are generated as `<itemCode>-U<NN>` (e.g. `ASE-MON-001-U01`). The
 parent item's available/total counts are kept in sync as units are added,
 updated, or archived.
+
+## Borrowing
+
+Borrow/return are available to everyone except the VIEWER role. `/who_has` and
+`/my_borrowed` are open to any registered user.
+
+| Command               | Access                                  | Description                                    |
+| --------------------- | --------------------------------------- | ---------------------------------------------- |
+| `/borrow_item [code]` | Admin, Coordinator, Assistant, Trusted  | Borrow a quantity, or a specific unit.         |
+| `/return_item`        | Admin, Coordinator, Assistant, Trusted  | Return one of your active borrows.             |
+| `/who_has <code>`     | Registered                              | See who currently holds an item.               |
+| `/my_borrowed`        | Registered                              | See what you currently have borrowed.          |
+
+```txt
+You:  /borrow_item ASE-CABL-001
+Bot:  How many to borrow? (1–8)        You: 1
+Bot:  Purpose? ...                     You: Event setup
+Bot:  Expected return date? ...        (tap) ⏭ Skip
+Bot:  Please confirm ...               [ ✅ Confirm ]
+You:  (tap) ✅ Confirm
+Bot:  ✅ Borrow recorded. Item: HDMI Cable, Quantity: 1, Status: Borrowed
+
+You:  /borrow_item ASE-MON-001
+Bot:  "LG Monitor" — choose a unit to borrow:
+      [ ASE-MON-001-U01 ]
+You:  (tap) ASE-MON-001-U01
+Bot:  Purpose? → due date → Confirm → ✅ Borrow recorded.
+
+You:  /return_item
+Bot:  Which item are you returning?     (tap a borrow)
+Bot:  (for a unit) What condition is it in?  [ Good ] [ Damaged ] ...
+You:  (tap) Good
+Bot:  ✅ Return recorded. Status: RETURNED
+```
 
 ---
 

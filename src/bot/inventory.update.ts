@@ -6,6 +6,7 @@ import { BOT_MESSAGES } from './bot.messages';
 import { ConversationService } from './conversation/conversation.service';
 import { InventoryFlowService } from './flows/inventory-flow.service';
 import { UnitFlowService, UNIT_FLOWS } from './flows/unit-flow.service';
+import { BorrowingFlowService, BORROW_FLOWS } from './flows/borrowing-flow.service';
 import { InventoryService } from '../inventory/inventory.service';
 import {
   formatItemDetail,
@@ -24,6 +25,7 @@ export class InventoryUpdate {
     private readonly inventory: InventoryService,
     private readonly flows: InventoryFlowService,
     private readonly unitFlows: UnitFlowService,
+    private readonly borrowingFlows: BorrowingFlowService,
     private readonly conversations: ConversationService,
   ) {}
 
@@ -148,6 +150,8 @@ export class InventoryUpdate {
     }
     if (UNIT_FLOWS.includes(state.flow)) {
       await this.unitFlows.handleText(ctx, userId, text);
+    } else if (BORROW_FLOWS.includes(state.flow)) {
+      await this.borrowingFlows.handleText(ctx, userId, text);
     } else {
       await this.flows.handleText(ctx, userId, text);
     }
@@ -165,6 +169,8 @@ export class InventoryUpdate {
     const state = this.conversations.get(userId);
     if (state && UNIT_FLOWS.includes(state.flow)) {
       await this.unitFlows.handleCallback(ctx, userId, data ?? '');
+    } else if (state && BORROW_FLOWS.includes(state.flow)) {
+      await this.borrowingFlows.handleCallback(ctx, userId, data ?? '');
     } else {
       await this.flows.handleCallback(ctx, userId, data ?? '');
     }

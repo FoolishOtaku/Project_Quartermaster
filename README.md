@@ -5,13 +5,21 @@ Laboratory** at Telkom University. It lets authorized members record, search,
 borrow, return, and report lab inventory through a Telegram bot, with an
 optional AI assistant added in later versions.
 
-> **Current release: v0.3.0 — Individual-Asset Inventory.**
-> Track unique assets (monitors, PCs, routers) unit-by-unit with their own code,
-> condition, location, and availability — on top of the quantity-based Inventory
-> MVP (`/add_item`, `/search_item`, `/view_item`, `/update_item`,
-> `/archive_item`) and the v0.1.0 foundation (`/start`, `/help`, `/me`).
+> **Current release: v0.4.0 — Borrowing System.**
+> Borrow and return lab items — quantity stock or individual asset units — with
+> transactional availability tracking and a permanent borrow history
+> (`/borrow_item`, `/return_item`, `/who_has`, `/my_borrowed`), on top of the
+> v0.3.0 individual-asset inventory and the v0.2.x Inventory MVP.
 
-## Features in v0.3.0
+## Features in v0.4.0
+
+- `BorrowRecord` model with borrow history (records are never deleted).
+- `/borrow_item` (quantity or specific unit), `/return_item`, `/who_has`, `/my_borrowed`.
+- Transactional borrow/return — no overselling or double-borrowing under concurrency.
+- Per-unit return condition (Good / Damaged / Needs Repair / Missing) updates the unit's state.
+- Role-gated borrowing (everyone except Viewer); view commands open to any registered user.
+
+## Features from v0.3.0
 
 - Individual-asset tracking via the `ItemUnit` model: one row per physical unit.
 - `/add_item` supports the Individual Asset tracking type.
@@ -21,7 +29,7 @@ optional AI assistant added in later versions.
 
 ## Features from v0.2.x
 
-- Inline-keyboard (button) driven `/add_item`, `/update_item`, `/archive_item`, and unit flows.
+- Inline-keyboard (button) driven flows with typing fallback.
 - Category and Location models, seeded from the spreadsheet Lookup Lists.
 - Quantity-based items (Bulk Stock / Consumable) with auto-generated codes.
 - Search and view for any registered user; add/update for admin/assistant; archive for admin.
@@ -53,7 +61,7 @@ optional AI assistant added in later versions.
 
 ```txt
 prisma/
-  schema.prisma        # User, Category, Location, Item, ItemUnit + enums
+  schema.prisma        # User, Category, Location, Item, ItemUnit, BorrowRecord + enums
   seed.ts              # Admin + categories + locations seed
 src/
   main.ts              # Bootstrap (worker context)
@@ -62,7 +70,8 @@ src/
   users/               # UsersModule, service, repository
   categories/          # CategoriesModule, service, repository
   locations/           # LocationsModule, service, repository
-  inventory/           # InventoryModule: service, repository, item-code util, presenter, types
+  inventory/           # InventoryModule: items + units, code util, presenter, types
+  borrowing/           # BorrowingModule: service, repository (transactions), presenter
   bot/                 # Bot updates, services, messages, conversation state + flows
   common/              # Guards, decorators, constants (role checking)
 docs/
@@ -70,6 +79,7 @@ docs/
   REQUIREMENTS.md      # Acceptance criteria for v0.1.0
   REQUIREMENTS-0.2.0.md# Acceptance criteria for v0.2.0
   REQUIREMENTS-0.3.0.md# Acceptance criteria for v0.3.0
+  REQUIREMENTS-0.4.0.md# Acceptance criteria for v0.4.0
   BOT_COMMANDS.md      # Command reference with example flows
 Design.md              # Full software design document and roadmap
 ```
@@ -138,6 +148,7 @@ npm run start:dev
 - [Requirements (v0.1.0)](docs/REQUIREMENTS.md)
 - [Requirements (v0.2.0)](docs/REQUIREMENTS-0.2.0.md)
 - [Requirements (v0.3.0)](docs/REQUIREMENTS-0.3.0.md)
+- [Requirements (v0.4.0)](docs/REQUIREMENTS-0.4.0.md)
 - [Design document & roadmap](Design.md)
 
 ## License
