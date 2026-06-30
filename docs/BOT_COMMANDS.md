@@ -1,4 +1,4 @@
-# Bot Commands (v0.5.0)
+# Bot Commands (v0.4.1)
 
 All commands require you to be a **registered, active** user. Write actions are
 role-gated. Most choices are made by **tapping inline buttons**; you can also
@@ -35,34 +35,34 @@ the full set of commands as tappable suggestions.
 
 ## General
 
-| Command | Access   | Description                          |
-| ------- | -------- | ------------------------------------ |
-| `/start`| Everyone | Welcome message + Open menu button.  |
-| `/menu` | Registered | Open the interactive button menu.  |
-| `/help` | Everyone | Full command list.                   |
-| `/me`   | Registered | Your account details and role.     |
+| Command  | Access     | Description                         |
+| -------- | ---------- | ----------------------------------- |
+| `/start` | Everyone   | Welcome message + Open menu button. |
+| `/menu`  | Registered | Open the interactive button menu.   |
+| `/help`  | Everyone   | Full command list.                  |
+| `/me`    | Registered | Your account details and role.      |
 
 ## Inventory
 
-| Command                  | Access            | Description                                  |
-| ------------------------ | ----------------- | -------------------------------------------- |
-| `/search_item <keyword>` | Registered        | Search by name, code, category, or location. |
-| `/view_item <code>`      | Registered        | Show full detail for one item.               |
-| `/add_item`              | Admin, Assistant  | Guided flow to create an item.               |
-| `/update_item [code]`    | Admin, Assistant  | Guided flow to update one field.             |
-| `/archive_item [code]`   | Admin             | Confirm, then soft-delete (archive).         |
+| Command                  | Access           | Description                                  |
+| ------------------------ | ---------------- | -------------------------------------------- |
+| `/search_item <keyword>` | Registered       | Search by name, code, category, or location. |
+| `/view_item <code>`      | Registered       | Show full detail for one item.               |
+| `/add_item`              | Admin, Assistant | Guided flow to create an item.               |
+| `/update_item [code]`    | Admin, Assistant | Guided flow to update one field.             |
+| `/archive_item [code]`   | Admin            | Confirm, then soft-delete (archive).         |
 
 ## Individual-asset units
 
 Pick **Individual Asset** as the tracking type in `/add_item` to create an asset
 that is tracked unit-by-unit (e.g. monitors, PCs). Then add physical units:
 
-| Command                    | Access            | Description                                   |
-| -------------------------- | ----------------- | --------------------------------------------- |
-| `/view_unit <unitCode>`    | Registered        | Show one physical unit.                       |
-| `/add_unit <itemCode>`     | Admin, Assistant  | Add a unit to an individual-asset item.       |
-| `/update_unit <unitCode>`  | Admin, Assistant  | Update a unit's condition/availability/etc.   |
-| `/archive_unit <unitCode>` | Admin             | Confirm, then soft-delete a unit.             |
+| Command                    | Access           | Description                                 |
+| -------------------------- | ---------------- | ------------------------------------------- |
+| `/view_unit <unitCode>`    | Registered       | Show one physical unit.                     |
+| `/add_unit <itemCode>`     | Admin, Assistant | Add a unit to an individual-asset item.     |
+| `/update_unit <unitCode>`  | Admin, Assistant | Update a unit's condition/availability/etc. |
+| `/archive_unit <unitCode>` | Admin            | Confirm, then soft-delete a unit.           |
 
 Unit codes are generated as `<itemCode>-U<NN>` (e.g. `ASE-MON-001-U01`). The
 parent item's available/total counts are kept in sync as units are added,
@@ -73,12 +73,12 @@ updated, or archived.
 Borrow/return are available to everyone except the VIEWER role. `/who_has` and
 `/my_borrowed` are open to any registered user.
 
-| Command               | Access                                  | Description                                    |
-| --------------------- | --------------------------------------- | ---------------------------------------------- |
-| `/borrow_item [code]` | Admin, Coordinator, Assistant, Trusted  | Borrow a quantity, or a specific unit.         |
-| `/return_item`        | Admin, Coordinator, Assistant, Trusted  | Return one of your active borrows.             |
-| `/who_has <code>`     | Registered                              | See who currently holds an item.               |
-| `/my_borrowed`        | Registered                              | See what you currently have borrowed.          |
+| Command               | Access                                 | Description                            |
+| --------------------- | -------------------------------------- | -------------------------------------- |
+| `/borrow_item [code]` | Admin, Coordinator, Assistant, Trusted | Borrow a quantity, or a specific unit. |
+| `/return_item`        | Admin, Coordinator, Assistant, Trusted | Return one of your active borrows.     |
+| `/who_has <code>`     | Registered                             | See who currently holds an item.       |
+| `/my_borrowed`        | Registered                             | See what you currently have borrowed.  |
 
 ```txt
 You:  /borrow_item ASE-CABL-001
@@ -100,43 +100,6 @@ Bot:  Which item are you returning?     (tap a borrow)
 Bot:  (for a unit) What condition is it in?  [ Good ] [ Damaged ] ...
 You:  (tap) Good
 Bot:  ✅ Return recorded. Status: RETURNED
-```
-
-## Reports (v0.5.0)
-
-Reports are available to **Admin, Coordinator, and Assistant** roles. Open the
-**📊 Reports** menu entry, or use the commands below. Each text report offers a
-**⬇️ Download CSV** button, and `/export_report <kind>` sends the CSV directly.
-
-| Command                      | Description                                  |
-| ---------------------------- | -------------------------------------------- |
-| `/report`                    | List the report kinds (with buttons).        |
-| `/report inventory`          | Totals + health snapshot.                    |
-| `/report borrowed`           | Everything currently out on loan.            |
-| `/report damaged`            | Needs repair / broken / in maintenance.      |
-| `/report lost`               | Lost or missing items.                       |
-| `/report unknown_location`   | Items with no recorded location.             |
-| `/report ownership`          | Count by owner / source.                     |
-| `/report low_stock`          | Bulk / consumable at or below minimum stock. |
-| `/report warranty`           | Warranty expired or expiring within 30 days. |
-| `/report maintenance_due`    | Scheduled check due or overdue.              |
-| `/export_report <kind>`      | Send that report as a CSV file.              |
-
-```txt
-You:  /report low_stock
-Bot:  Low Stock Items (2)
-
-      1. HDMI Cable
-         Code: ASE-CABL-001
-         Category: Cable
-         Location: Cable Box
-         Condition: Good
-         Availability: Available
-         Stock: 1 / min 3
-      ...
-      [ ⬇️ Download CSV ] [ ⬅️ Reports ]
-You:  (tap) ⬇️ Download CSV
-Bot:  (sends report_low_stock_2026-06-30.csv)
 ```
 
 ---
@@ -262,7 +225,6 @@ Bot:  ✅ Archived "HDMI Cable" (ASE-CABL-001).
 Codes are generated automatically as `ASE-<PREFIX>-<NNN>`, where `<PREFIX>` is
 derived from the category name (up to 4 letters) and `<NNN>` is the next free
 sequence for that prefix. Examples: `ASE-CABL-001`, `ASE-MONI-002`.
-
 
 ## Individual asset + units (example)
 
