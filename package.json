@@ -1,7 +1,7 @@
 {
   "name": "project-quartermaster",
-  "version": "0.4.0",
-  "description": "Telegram-based inventory management bot for the ASE Software Engineering Laboratory (v0.4.0: borrowing system).",
+  "version": "0.5.0",
+  "description": "Telegram-based inventory management bot for the ASE Software Engineering Laboratory (v0.5.0: reports + CSV export).",
   "license": "MIT",
   "private": true,
   "scripts": {

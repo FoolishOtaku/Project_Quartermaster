@@ -1,8 +1,8 @@
-# Project Quartermaster — Quickstart (v0.4.0)
+# Project Quartermaster — Quickstart (v0.5.0)
 
 This guide takes you from a clean checkout to a running Telegram bot with
-working general commands (`/start`, `/help`, `/me`), a seeded admin account,
-seeded categories/locations, and the inventory commands (`/add_item`,
+working general commands (`/start`, `/help`, `/me`, `/menu`), a seeded admin
+account, seeded categories/locations, and the inventory commands (`/add_item`,
 `/search_item`, `/view_item`, `/update_item`, `/archive_item`).
 
 Estimated time: **15–25 minutes.**
@@ -11,7 +11,9 @@ Estimated time: **15–25 minutes.**
 
 ## 1. What you will build
 
-Version 0.4.0 adds the **borrowing system** on top of the inventory. By the end of this guide:
+Version 0.5.0 adds **reports + CSV export** (`/report`, `/export_report`, and a
+📊 Reports menu entry) on top of the interactive button menu. By the end of
+this guide:
 
 - The bot runs locally and connects to Telegram.
 - A PostgreSQL database exists with `users`, `categories`, `locations`, and `items` tables.
@@ -205,7 +207,7 @@ You should see:
 
 ```txt
 [Nest] LOG [PrismaService] Connected to the database
-[Nest] LOG [Bootstrap] Project Quartermaster bot is running (v0.4.0)
+[Nest] LOG [Bootstrap] Project Quartermaster bot is running (v0.5.0)
 ```
 
 The process stays running and listens to Telegram via long polling. Leave it
@@ -292,9 +294,10 @@ pm2 save
 
 ## 15. What's next
 
-See the roadmap in `Design.md` (Section 29). This release delivered **v0.4.0 —
-Borrowing System** (`/borrow_item`, `/return_item`, `/who_has`, `/my_borrowed`).
-The next milestone is **v0.5.0 — Reports** (inventory summary, borrowed,
-damaged, low stock, ownership; CSV export).
+See the roadmap in `Design.md` (Section 29). This release delivered **v0.5.0 —
+Reports** (`/report`, `/export_report`, and a 📊 Reports menu entry; CSV export),
+on top of the v0.4.1 interactive button UI and the v0.4.0 Borrowing System.
+The next milestone is **v0.6.0 — Audit Logs** (traceable changes via an
+`AuditLog` model + an admin audit view).
 
 For the full command reference, see [BOT_COMMANDS.md](BOT_COMMANDS.md).

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Project Quartermaster — one-command quickstart (v0.2.2)
+# Project Quartermaster — one-command quickstart (v0.5.0)
 #
 # Runs everything needed to get the bot running:
 #   1. Ensures a .env exists (creates it from .env.example on first run)

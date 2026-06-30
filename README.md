@@ -5,11 +5,30 @@ Laboratory** at Telkom University. It lets authorized members record, search,
 borrow, return, and report lab inventory through a Telegram bot, with an
 optional AI assistant added in later versions.
 
-> **Current release: v0.4.0 — Borrowing System.**
-> Borrow and return lab items — quantity stock or individual asset units — with
-> transactional availability tracking and a permanent borrow history
-> (`/borrow_item`, `/return_item`, `/who_has`, `/my_borrowed`), on top of the
-> v0.3.0 individual-asset inventory and the v0.2.x Inventory MVP.
+> **Current release: v0.5.0 — Reports & CSV Export.**
+> Generate inventory reports right in Telegram — summary, borrowed, damaged,
+> lost, unknown-location, ownership, low-stock, warranty, and maintenance-due —
+> and download any of them as CSV (`/report`, `/export_report`, plus a **📊
+> Reports** entry in the interactive menu). Built on top of the v0.4.1
+> interactive button UI, the v0.4.0 borrowing system, v0.3.0 individual-asset
+> inventory, and the v0.2.x Inventory MVP.
+
+## Features in v0.5.0
+
+- `/report [kind]` text reports: `inventory`, `borrowed`, `damaged`, `lost`,
+  `unknown_location`, `ownership`, `low_stock`, `warranty`, `maintenance_due`.
+- `/export_report <kind>` and a **⬇️ Download CSV** button on every report.
+- **📊 Reports** menu entry for Admin / Coordinator / Assistant roles.
+- No schema changes — reports are derived from existing inventory data.
+
+## Features in v0.4.1
+
+- `/menu` interactive inline-button menu, **tailored to your role** (Viewers see
+  read-only actions; borrowers see Borrow/Return; admins/assistants see Manage).
+- "📋 Open menu" button attached to `/start` and `/help`.
+- Button-started capture flows for Search / View item / View unit / Who has.
+- Telegram native "/" command list registered via `setMyCommands`.
+- All slash commands continue to work unchanged (buttons just trigger them).
 
 ## Features in v0.4.0
 
@@ -72,6 +91,7 @@ src/
   locations/           # LocationsModule, service, repository
   inventory/           # InventoryModule: items + units, code util, presenter, types
   borrowing/           # BorrowingModule: service, repository (transactions), presenter
+  reports/             # ReportsModule: repository (aggregations), presenter (text + CSV), service
   bot/                 # Bot updates, services, messages, conversation state + flows
   common/              # Guards, decorators, constants (role checking)
 docs/
@@ -80,6 +100,7 @@ docs/
   REQUIREMENTS-0.2.0.md# Acceptance criteria for v0.2.0
   REQUIREMENTS-0.3.0.md# Acceptance criteria for v0.3.0
   REQUIREMENTS-0.4.0.md# Acceptance criteria for v0.4.0
+  REQUIREMENTS-0.5.0.md# Acceptance criteria for v0.5.0
   BOT_COMMANDS.md      # Command reference with example flows
 Design.md              # Full software design document and roadmap
 ```
@@ -149,6 +170,7 @@ npm run start:dev
 - [Requirements (v0.2.0)](docs/REQUIREMENTS-0.2.0.md)
 - [Requirements (v0.3.0)](docs/REQUIREMENTS-0.3.0.md)
 - [Requirements (v0.4.0)](docs/REQUIREMENTS-0.4.0.md)
+- [Requirements (v0.5.0)](docs/REQUIREMENTS-0.5.0.md)
 - [Design document & roadmap](Design.md)
 
 ## License

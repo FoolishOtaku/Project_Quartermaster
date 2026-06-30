@@ -8,7 +8,13 @@ export type ConversationFlow =
   | 'UPDATE_UNIT'
   | 'ARCHIVE_UNIT'
   | 'BORROW_ITEM'
-  | 'RETURN_ITEM';
+  | 'RETURN_ITEM'
+  // Single-step "capture" flows started from the interactive menu. They just
+  // wait for one line of text, run a read query, then clear themselves.
+  | 'SEARCH'
+  | 'VIEW_ITEM'
+  | 'VIEW_UNIT'
+  | 'WHO_HAS';
 
 export interface ConversationState {
   flow: ConversationFlow;

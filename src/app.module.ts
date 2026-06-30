@@ -7,6 +7,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { LocationsModule } from './locations/locations.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { BorrowingModule } from './borrowing/borrowing.module';
+import { ReportsModule } from './reports/reports.module';
 import { BotModule } from './bot/bot.module';
 
 @Module({
@@ -25,6 +26,7 @@ import { BotModule } from './bot/bot.module';
     LocationsModule,
     InventoryModule,
     BorrowingModule,
+    ReportsModule,
     BotModule,
   ],
 })

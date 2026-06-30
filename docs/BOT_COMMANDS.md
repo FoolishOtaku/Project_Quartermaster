@@ -1,15 +1,44 @@
-# Bot Commands (v0.4.0)
+# Bot Commands (v0.5.0)
 
 All commands require you to be a **registered, active** user. Write actions are
 role-gated. Most choices are made by **tapping inline buttons**; you can also
 type the value as a fallback. Tap **❌ Cancel** (or send `/cancel`) to stop a
 multi-step flow, and **⏭ Skip** to leave an optional field blank.
 
+## Interactive menu (v0.4.1)
+
+You don't have to memorize commands. Send **`/menu`** (or tap **📋 Open menu**
+under `/start` and `/help`) to get a tappable button menu. The menu is
+**role-aware** — it only shows the actions your role is allowed to use:
+
+```txt
+You:  /menu
+Bot:  📋 Quartermaster menu — hi Alex!
+      [ 🔍 Search ]      [ 📄 View item ]
+      [ 🔧 View unit ]   [ 👥 Who has it ]
+      [ 📤 Borrow ]      [ 📥 Return ]        (hidden for Viewers)
+      [ 📋 My borrowed ] [ 👤 My profile ]
+      [ 🛠 Manage inventory ]                 (admin / assistant only)
+      [ ❓ Help ]
+You:  (tap) 🔍 Search
+Bot:  🔍 Type a keyword to search ...   [ ❌ Cancel ]
+You:  hdmi
+Bot:  Found 1 item(s) for "hdmi": ...
+```
+
+Tapping **🛠 Manage inventory** opens a submenu with Add / Update item & unit
+(and Archive, for admins). Every button simply runs the same action as the
+matching slash command, so the two ways of driving the bot stay in sync.
+
+Telegram's native **"/" command list** is also registered, so typing `/` shows
+the full set of commands as tappable suggestions.
+
 ## General
 
 | Command | Access   | Description                          |
 | ------- | -------- | ------------------------------------ |
-| `/start`| Everyone | Welcome message.                     |
+| `/start`| Everyone | Welcome message + Open menu button.  |
+| `/menu` | Registered | Open the interactive button menu.  |
 | `/help` | Everyone | Full command list.                   |
 | `/me`   | Registered | Your account details and role.     |
 
@@ -71,6 +100,43 @@ Bot:  Which item are you returning?     (tap a borrow)
 Bot:  (for a unit) What condition is it in?  [ Good ] [ Damaged ] ...
 You:  (tap) Good
 Bot:  ✅ Return recorded. Status: RETURNED
+```
+
+## Reports (v0.5.0)
+
+Reports are available to **Admin, Coordinator, and Assistant** roles. Open the
+**📊 Reports** menu entry, or use the commands below. Each text report offers a
+**⬇️ Download CSV** button, and `/export_report <kind>` sends the CSV directly.
+
+| Command                      | Description                                  |
+| ---------------------------- | -------------------------------------------- |
+| `/report`                    | List the report kinds (with buttons).        |
+| `/report inventory`          | Totals + health snapshot.                    |
+| `/report borrowed`           | Everything currently out on loan.            |
+| `/report damaged`            | Needs repair / broken / in maintenance.      |
+| `/report lost`               | Lost or missing items.                       |
+| `/report unknown_location`   | Items with no recorded location.             |
+| `/report ownership`          | Count by owner / source.                     |
+| `/report low_stock`          | Bulk / consumable at or below minimum stock. |
+| `/report warranty`           | Warranty expired or expiring within 30 days. |
+| `/report maintenance_due`    | Scheduled check due or overdue.              |
+| `/export_report <kind>`      | Send that report as a CSV file.              |
+
+```txt
+You:  /report low_stock
+Bot:  Low Stock Items (2)
+
+      1. HDMI Cable
+         Code: ASE-CABL-001
+         Category: Cable
+         Location: Cable Box
+         Condition: Good
+         Availability: Available
+         Stock: 1 / min 3
+      ...
+      [ ⬇️ Download CSV ] [ ⬅️ Reports ]
+You:  (tap) ⬇️ Download CSV
+Bot:  (sends report_low_stock_2026-06-30.csv)
 ```
 
 ---

@@ -7,6 +7,7 @@ import { ConversationService } from './conversation/conversation.service';
 import { InventoryFlowService } from './flows/inventory-flow.service';
 import { UnitFlowService, UNIT_FLOWS } from './flows/unit-flow.service';
 import { BorrowingFlowService, BORROW_FLOWS } from './flows/borrowing-flow.service';
+import { MenuService, MENU_CAPTURE_FLOWS } from './flows/menu.service';
 import { InventoryService } from '../inventory/inventory.service';
 import {
   formatItemDetail,
@@ -26,8 +27,18 @@ export class InventoryUpdate {
     private readonly flows: InventoryFlowService,
     private readonly unitFlows: UnitFlowService,
     private readonly borrowingFlows: BorrowingFlowService,
+    private readonly menu: MenuService,
     private readonly conversations: ConversationService,
   ) {}
+
+  // ---- Menu ----------------------------------------------------------------
+
+  /** /menu — interactive button menu for any registered user. */
+  @UseGuards(RegisteredGuard)
+  @Command('menu')
+  async onMenu(@CtxUser() user: User, @Ctx() ctx: BotContext): Promise<void> {
+    await this.menu.showMainMenu(ctx, user);
+  }
 
   // ---- Item commands -------------------------------------------------------
 
@@ -152,6 +163,8 @@ export class InventoryUpdate {
       await this.unitFlows.handleText(ctx, userId, text);
     } else if (BORROW_FLOWS.includes(state.flow)) {
       await this.borrowingFlows.handleText(ctx, userId, text);
+    } else if (MENU_CAPTURE_FLOWS.includes(state.flow)) {
+      await this.menu.handleText(ctx, userId, text);
     } else {
       await this.flows.handleText(ctx, userId, text);
     }
@@ -166,11 +179,18 @@ export class InventoryUpdate {
       await ctx.answerCbQuery();
       return;
     }
+    // Menu navigation/actions are handled first, regardless of any active flow.
+    if (data.startsWith('qm|menu')) {
+      await this.menu.handleCallback(ctx, userId, data);
+      return;
+    }
     const state = this.conversations.get(userId);
     if (state && UNIT_FLOWS.includes(state.flow)) {
       await this.unitFlows.handleCallback(ctx, userId, data ?? '');
     } else if (state && BORROW_FLOWS.includes(state.flow)) {
       await this.borrowingFlows.handleCallback(ctx, userId, data ?? '');
+    } else if (state && MENU_CAPTURE_FLOWS.includes(state.flow)) {
+      await this.menu.handleCaptureCallback(ctx, userId, data ?? '');
     } else {
       await this.flows.handleCallback(ctx, userId, data ?? '');
     }
