@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Test / coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Prisma local databases
+prisma/*.db
+prisma/*.db-journal
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Excel lock files
+~$*.xlsx
+
+# Keep the example env in version control
+!.env.example

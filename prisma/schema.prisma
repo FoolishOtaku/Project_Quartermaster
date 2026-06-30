@@ -1,0 +1,37 @@
+// Project Quartermaster — Prisma schema
+// Version 0.1.0 (Bot Foundation): only the User model is required.
+// Later versions add Category, Location, Item, ItemUnit, BorrowRecord,
+// MaintenanceLog, AuditLog, and AiPendingAction (see Design.md).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Authorized Telegram users of the bot.
+model User {
+  id               String   @id @default(uuid())
+  telegramId       String   @unique
+  telegramUsername String?
+  fullName         String
+  nim              String?
+  role             UserRole @default(VIEWER)
+  isActive         Boolean  @default(true)
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  COORDINATOR
+  ASSISTANT
+  TRUSTED_MEMBER
+  VIEWER
+}
